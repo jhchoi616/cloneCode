@@ -1,0 +1,87 @@
+<!DOCTYPE html> <html lang="ko"> <head> <meta charset="UTF-8"> <title>공지사항</title>
+<style>
+    body {
+        margin: 0;
+        padding: 40px;
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+    }
+
+    h1 {
+        margin-bottom: 30px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border-bottom: 1px solid #ddd;
+        padding: 15px 10px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f8f8f8;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 50px 0;
+        color: #888;
+    }
+</style>
+
+</head> <body> <div class="container">
+<h1>공지사항</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th style="width: 80px;">번호</th>
+        <th>제목</th>
+        <th style="width: 180px;">작성자</th>
+        <th style="width: 180px;">작성일</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    <c:choose>
+
+        <c:when test="${empty posts}">
+            <tr>
+                <td colspan="4" class="empty">
+                    등록된 공지사항이 없습니다.
+                </td>
+            </tr>
+        </c:when>
+
+        <c:otherwise>
+
+            <c:forEach var="post" items="${posts}">
+                <tr>
+                    <td>${post.id}</td>
+                    <td>${post.title}</td>
+                    <td>${post.createdBy}</td>
+                    <td>${post.createdAt}</td>
+                </tr>
+            </c:forEach>
+
+        </c:otherwise>
+
+    </c:choose>
+
+    </tbody>
+</table>
+
+</div> </body> </html>

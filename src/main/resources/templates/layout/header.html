@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>B.POINT — Move More, Move Live</title>
+
+    <meta name="description"
+          content="B.POINT 농구교실 — 결과 너머의 성장, 무의식 속의 더 선명한 삶." />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&family=Archivo+Black&family=Inter:wght@400;600;800;900&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          th:href="@{/css/styles.css}" />
+</head>
+
+<body>
+
+<header class="nav"
+        th:fragment="header">
+
+    <div class="nav-inner">
+
+        <a th:href="@{/}"
+           class="brand">
+
+            <img th:src="@{/assets/헤더 로고.png}"
+                 alt="B.POINT"
+                 class="brand-logo" />
+
+        </a>
+
+        <button class="menu-toggle"
+                id="menuToggle"
+                aria-label="Menu">
+            ☰
+        </button>
+
+        <nav class="menu"
+             id="menu">
+
+            <a th:href="@{/}"
+               th:classappend="${currentUri == '/' ? ' active' : ''}">
+                홈
+            </a>
+
+            <a th:href="@{/about}"
+               th:classappend="${currentUri == '/about' ? ' active' : ''}">
+                소개
+            </a>
+
+            <a th:href="@{/programs}"
+               th:classappend="${currentUri == '/program' ? ' active' : ''}">
+                프로그램
+            </a>
+
+            <a th:href="@{/news}"
+               th:classappend="${currentUri == '/news' ? ' active' : ''}">
+                소식
+            </a>
+
+            <a th:href="@{/notice}"
+               th:classappend="${currentUri == '/notice' ? ' active' : ''}">
+                공지
+            </a>
+
+            <a th:href="@{/contact}"
+               th:classappend="${currentUri == '/contact' ? ' active' : ''}">
+                문의
+            </a>
+
+            <a class="cta"
+               href="https://smartstore.naver.com"
+               target="_blank"
+               rel="noopener">
+                클래스 신청 →
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>B.POINT — Move More, Move Live</title>
+
+<meta name="description"
+      content="B.POINT 농구교실 — 결과 너머의 성장, 무의식 속의 더 선명한 삶." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&family=Archivo+Black&family=Inter:wght@400;600;800;900&display=swap"
+      rel="stylesheet">
+
+<!-- static/css/styles.css -->
+<link rel="stylesheet"
+      th:href="@{/css/styles.css}" />
+
+<style>
+  .hero{position:relative;background:linear-gradient(180deg,#0E161B 0%, var(--black) 60%, #0A0F12 100%);color:#fff;padding:160px 0 120px;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(800px 400px at 85% 20%, rgba(241,88,38,.18), transparent 60%),radial-gradient(700px 500px at 10% 90%, rgba(241,88,38,.10), transparent 60%);pointer-events:none}
+  .hero-grid{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center}
+  .hero-eyebrow{display:inline-flex;align-items:center;gap:10px;color:var(--orange);font-weight:700;font-size:13px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:24px}
+  .hero-eyebrow::before{content:"";width:32px;height:2px;background:var(--orange)}
+  .hero h1{font-family:'Archivo Black',sans-serif;font-size:clamp(44px,7vw,92px);line-height:.95;letter-spacing:-0.03em;margin-bottom:28px}
+  .hero h1 .o{color:var(--orange)}
+  .hero p.lead{font-size:clamp(16px,1.4vw,19px);color:#C9CED2;max-width:540px;margin-bottom:36px}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+  .hero-visual{position:relative;display:flex;align-items:center;justify-content:center}
+  .logo-card{width:min(100%,460px);aspect-ratio:1/1;background:var(--black);border-radius:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 30px 80px rgba(241,88,38,.25), 0 8px 24px rgba(0,0,0,.4);border:1px solid rgba(241,88,38,.2);overflow:hidden}
+  .hero-logo{width:60%;height:auto;display:block;object-fit:contain}
+
+  @media (max-width: 880px){
+    .hero{padding:130px 0 80px}
+    .hero-grid{grid-template-columns:1fr;gap:50px}
+    .logo-card{margin:0 auto}
+  }
+
+  .marquee{background:var(--orange);color:#fff;overflow:hidden;border-top:1px solid rgba(0,0,0,.1);border-bottom:1px solid rgba(0,0,0,.1)}
+  .marquee-track{display:flex;gap:48px;padding:18px 0;animation:slide 28s linear infinite;white-space:nowrap;font-family:'Archivo Black',sans-serif;font-size:18px;letter-spacing:.06em}
+  .marquee-track span{display:inline-flex;align-items:center;gap:48px}
+  .marquee-track .sep{opacity:.6}
+
+  @keyframes slide{
+    from{transform:translateX(0)}
+    to{transform:translateX(-50%)}
+  }
+
+  section{padding:120px 0;position:relative}
+
+  #about{
+    background:
+      linear-gradient(rgba(251,249,246,.92), rgba(251,249,246,.92)),
+      url('https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1920&q=80&auto=format&fit=crop') center/cover no-repeat fixed;
+  }
+
+  .vision-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+  .vision-card{background:#fff;border-radius:var(--radius);padding:36px 30px;border:1px solid var(--gray-200);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease}
+  .vision-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.06);border-color:var(--orange)}
+  .vision-num{font-family:'Archivo Black',sans-serif;color:var(--orange);font-size:42px;line-height:1;margin-bottom:14px}
+  .vision-card h3{font-size:20px;font-weight:800;margin-bottom:12px;color:var(--ink)}
+  .vision-card p{font-size:15px;color:var(--gray-600);line-height:1.7}
+
+  @media (max-width: 880px){
+    .vision-grid{grid-template-columns:1fr}
+  }
+
+  #story{background:var(--black);color:#fff}
+  #story .eyebrow{color:var(--orange)}
+  #story h2.section-title{color:#fff;max-width:900px}
+
+  .story-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:80px;align-items:start;margin-top:40px}
+  .story-quote{border-left:3px solid var(--orange);padding:6px 0 6px 26px;font-family:'Archivo Black',sans-serif;font-size:28px;line-height:1.25;color:#fff}
+  .story-quote .o{color:var(--orange)}
+  .story-text p{font-size:16px;line-height:1.85;color:#C9CED2;margin-bottom:20px}
+  .story-text p:last-child{margin-bottom:0}
+
+  @media (max-width: 880px){
+    .story-grid{grid-template-columns:1fr;gap:36px}
+    .story-quote{font-size:22px}
+  }
+
+  .program-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px;margin-top:20px}
+  .program{position:relative;border-radius:20px;overflow:hidden;padding:48px 40px;color:#fff;min-height:480px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .25s ease}
+  .program:hover{transform:translateY(-4px)}
+  .program.class{background:linear-gradient(135deg,#1B252B 0%, var(--black) 100%)}
+  .program.event{background:linear-gradient(135deg,var(--orange) 0%, #D04518 100%)}
+  .program-tag{display:inline-block;font-family:'Archivo Black',sans-serif;font-size:13px;letter-spacing:.2em;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.15);margin-bottom:18px;width:fit-content}
+  .program.class .program-tag{color:var(--orange);background:rgba(241,88,38,.15)}
+  .program h3{font-family:'Archivo Black',sans-serif;font-size:38px;line-height:1.05;margin-bottom:14px;letter-spacing:-0.01em}
+  .program .ko{font-size:18px;font-weight:700;margin-bottom:24px;opacity:.92}
+  .program ul{list-style:none;display:flex;flex-direction:column;gap:14px}
+  .program li{font-size:14.5px;line-height:1.65;padding-left:22px;position:relative;opacity:.95}
+  .program li::before{content:"";position:absolute;left:0;top:9px;width:10px;height:2px;background:#fff}
+  .program.class li::before{background:var(--orange)}
+  .program li strong{font-weight:800;display:block;margin-bottom:2px}
+
+  @media (max-width: 880px){
+    .program-grid{grid-template-columns:1fr}
+    .program{padding:36px 28px;min-height:auto}
+    .program h3{font-size:30px}
+  }
+
+  #news{background:#FAFAFA}
+
+  .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:20px}
+  .news-card{background:#fff;border-radius:var(--radius);overflow:hidden;border:1px solid var(--gray-200);transition:transform .25s ease, box-shadow .25s ease;cursor:pointer}
+  .news-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.08)}
+  .news-thumb{aspect-ratio:4/3;background:var(--black);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .news-thumb img.news-mark{width:38%;height:auto;opacity:.5;object-fit:contain}
+  .news-thumb.t1{background:linear-gradient(135deg,#1B252B,var(--black))}
+  .news-thumb.t2{background:linear-gradient(135deg,var(--orange),#C9421A)}
+  .news-thumb.t3{background:linear-gradient(135deg,#2A3439,#0A0F12)}
+  .news-body{padding:24px 24px 26px}
+  .news-tag{font-family:'Archivo Black',sans-serif;font-size:11px;color:var(--orange);letter-spacing:.2em;margin-bottom:10px;display:block}
+  .news-card h4{font-size:18px;font-weight:800;line-height:1.4;margin-bottom:10px}
+  .news-card p{font-size:14px;color:var(--gray-600);line-height:1.6;margin-bottom:16px}
+  .news-meta{font-size:12.5px;color:var(--gray-400);font-weight:600}
+
+  @media (max-width: 880px){
+    .news-grid{grid-template-columns:1fr}
+  }
+
+  #contact{background:var(--black);color:#fff}
+  #contact .eyebrow{color:var(--orange)}
+  #contact h2.section-title{color:#fff}
+
+  .contact-wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:60px;margin-top:30px}
+  .contact-info p{color:#C9CED2;font-size:16px;line-height:1.75;margin-bottom:28px}
+  .info-row{display:flex;gap:16px;align-items:flex-start;padding:18px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+  .info-row:last-child{border-bottom:0}
+  .info-row .lbl{font-family:'Archivo Black',sans-serif;font-size:12px;letter-spacing:.18em;color:var(--orange);width:90px;flex-shrink:0;padding-top:2px}
+  .info-row .val{font-size:15px;color:#fff}
+
+  @media (max-width: 880px){
+    .contact-wrap{grid-template-columns:1fr;gap:36px}
+  }
+</style>
+</head>
+
+<body>
+
+<div th:replace="~{layout/header :: header}"></div>
+
+<section class="hero" id="home">
+
+  <div class="container hero-grid">
+
+    <div>
+
+      <span class="hero-eyebrow">
+        B.POINT SHOOTING
+      </span>
+
+      <h1>
+        MOVE MORE,<br>
+        MOVE <span class="o">LIVE.</span>
+      </h1>
+
+      <p class="lead">
+        단순한 활동을 넘어 더 깊은 움직임으로.<br>
+        무의식 속의 더 선명한 삶을 위한 농구 클래스.
+      </p>
+
+      <div class="hero-cta">
+
+        <a class="btn btn-primary"
+           href="https://smartstore.naver.com"
+           target="_blank"
+           rel="noopener">
+          클래스 바로가기 →
+        </a>
+
+        <a class="btn btn-ghost"
+           th:href="@{/about}">
+          브랜드 알아보기
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <div class="hero-visual">
+
+      <div class="logo-card">
+
+        <img th:src="@{/assets/메인 이미지 로고.png}"
+             alt="B.POINT"
+             class="hero-logo" />
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<div class="marquee" aria-hidden="true">
+
+  <div class="marquee-track">
+
+    <span>
+      MOVE MORE
+      <span class="sep">●</span>
+      MOVE LIVE
+      <span class="sep">●</span>
+      GROWTH BEYOND SCORE
+      <span class="sep">●</span>
+      RESILIENCE
+      <span class="sep">●</span>
+      INNOVATIVE EXPERIENCE
+      <span class="sep">●</span>
+    </span>
+
+    <span>
+      MOVE MORE
+      <span class="sep">●</span>
+      MOVE LIVE
+      <span class="sep">●</span>
+      GROWTH BEYOND SCORE
+      <span class="sep">●</span>
+      RESILIENCE
+      <span class="sep">●</span>
+      INNOVATIVE EXPERIENCE
+      <span class="sep">●</span>
+    </span>
+
+  </div>
+
+</div>
+
+
+<section id="about">
+
+  <div class="container">
+
+    <span class="eyebrow">
+      ABOUT B.POINT
+    </span>
+
+    <h2 class="section-title">
+      <div style="margin-bottom:10px;">
+
+        스포츠의 진정한 가치는<br>
+      </div>
+      <span class="o">스코어보드 너머에</span> 있습니다.
+    </h2>
+
+    <p class="section-sub">
+      우리는 당신이 흘린 땀방울 속에 숨겨진 미세한 변화에 집중합니다.
+      결과에 매몰되지 않고, 과정 속에서 스스로의 성장을 느끼는
+      새로운 스포츠 문화를 만들어 갑니다.
+    </p>
+
+    <div class="vision-grid">
+
+      <div class="vision-card reveal">
+        <div class="vision-num">01</div>
+
+        <h3>
+          회복탄력성<br>
+          <small style="font-size:13px;font-weight:600;color:var(--gray-400);letter-spacing:.1em">
+            RESILIENCE
+          </small>
+        </h3>
+
+        <p style="margin-top:14px">
+          실패나 실책 직후의 압박감 속에서도 다시 평정심을 찾고,
+          최적의 몰입 상태로 돌아가는 멘탈의 힘을 길러줍니다.
+        </p>
+      </div>
+
+
+      <div class="vision-card reveal">
+        <div class="vision-num">02</div>
+
+        <h3>
+          성장 중심<br>
+          <small style="font-size:13px;font-weight:600;color:var(--gray-400);letter-spacing:.1em">
+            GROWTH-ORIENTED
+          </small>
+        </h3>
+
+        <p style="margin-top:14px">
+          승패나 기록 같은 단편적인 결과보다,
+          그 과정에서 개인이 체득하는 작은 성취와
+          지속적인 도약을 가장 가치 있게 여깁니다.
+        </p>
+      </div>
+
+
+      <div class="vision-card reveal">
+        <div class="vision-num">03</div>
+
+        <h3>
+          혁신적 경험<br>
+          <small style="font-size:13px;font-weight:600;color:var(--gray-400);letter-spacing:.1em">
+            INNOVATIVE EXPERIENCE
+          </small>
+        </h3>
+
+        <p style="margin-top:14px">
+          엘리트 스포츠의 정교한 멘탈 케어 방식을 대중화하여,
+          누구나 자신의 성장을 즐기는 새로운 스포츠 문화를 선도합니다.
+        </p>
+      </div>
+
+    </div>
+
+    <div style="margin-top:48px;text-align:center">
+
+      <a class="btn btn-line"
+         th:href="@{/about}">
+        소개 자세히 보기 →
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="story">
+
+  <div class="container">
+
+    <span class="eyebrow">
+      OUR STORY
+    </span>
+
+    <h2 class="section-title">
+      0.1mm의 오차에서 시작된,<br>
+      <span class="o">정직한 성장의 거울.</span>
+    </h2>
+
+    <div class="story-grid">
+
+      <div>
+
+        <div class="story-quote">
+          "스포츠가 단순한<br>
+           승패의 결과물이 아닌,<br>
+          자신의 무의식을 비추고<br>
+          <span class="o">어제보다 나은 나를</span> 발견하는<br>
+          정직한 성장의 거울이 되기를."
+        </div>
+
+      </div>
+
+
+      <div class="story-text">
+
+        <p>
+          22살까지 엘리트 사격 선수로 사선(射線)에 서며,
+          0.1mm의 오차로 승패가 갈리는 냉혹한 승부의 세계를
+          온몸으로 겪었습니다.
+        </p>
+
+        <p>
+          선수 생활을 마친 후 생활체육의 현장에서 사람들을 가르치며
+          한 가지 소망이 생겼습니다.
+        </p>
+
+        <p>
+          이제 사격 선수 시절의 정교한 감각과 수많은 지도 경험을
+          결합하여, 타인과의 경쟁이 아닌 오직 자신의 성장에만
+          몰입할 수 있는 특별한 스포츠 경험을 열어갑니다.
+        </p>
+
+        <a class="btn btn-primary"
+           th:href="@{/story}"
+           style="margin-top:32px">
+          스토리 전문 보기 →
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="programs">
+
+  <div class="container">
+
+    <span class="eyebrow">
+      PROGRAMS
+    </span>
+
+    <h2 class="section-title">
+      승패를 넘어 우리를 하나로 잇는,<br>
+      <span class="o">함께 성장하는</span> 스포츠 경험.
+    </h2>
+
+    <p class="section-sub">
+      엘리트 사격 선수의 정밀한 감각과 멘탈 수련 노하우를
+      농구 교육에 접목했습니다.
+    </p>
+
+    <div class="program-grid">
+
+      <div class="program class reveal">
+
+        <div>
+
+          <span class="program-tag">
+            CLASS
+          </span>
+
+          <h3>
+            나를 마주하고,<br>
+            어제보다 단단해지는 시간.
+          </h3>
+
+          <p class="ko">
+            개인 · 그룹 농구 클래스
+          </p>
+
+          <ul>
+            <li>
+              <strong>몰입의 기술 전수</strong>
+              사격 선수의 호흡법·마인드 컨트롤 기법.
+            </li>
+
+            <li>
+              <strong>성장 중심 피드백</strong>
+              점수가 아닌 수행 과정의 심리 변화에 집중.
+            </li>
+
+            <li>
+              <strong>무의식 멘탈 코칭</strong>
+              심리적 압박의 원인을 데이터로 찾기.
+            </li>
+          </ul>
+
+        </div>
+
+        <a class="btn btn-primary"
+           style="margin-top:28px;width:fit-content"
+           th:href="@{/class}">
+          CLASS 자세히 보기 →
+        </a>
+
+      </div>
+
+
+      <div class="program event reveal">
+
+        <div>
+
+          <span class="program-tag"
+                style="background:rgba(0,0,0,.18);color:#fff">
+            EVENT
+          </span>
+
+          <h3>
+            성취를 공유하고<br>
+            즐거움으로 하나 되는 축제.
+          </h3>
+
+          <p class="ko">
+            대회 · 행사 · 커뮤니티
+          </p>
+
+          <ul>
+            <li>
+              <strong>포용적 경쟁 시스템</strong>
+              각자의 목표를 달성한 모두가 주인공.
+            </li>
+
+            <li>
+              <strong>통합의 장 마련</strong>
+              실력 차이를 넘어 스포츠로 소통.
+            </li>
+
+            <li>
+              <strong>성장의 궤적 공유</strong>
+              각자의 한계를 넓혀가는 과정 응원.
+            </li>
+          </ul>
+
+        </div>
+
+        <a class="btn btn-dark"
+           style="margin-top:28px;width:fit-content"
+           th:href="@{/event}">
+          EVENT 자세히 보기 →
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================
+     NOTICE / NEWS
+     ========================= -->
+
+<section id="news">
+
+  <div class="container">
+
+    <span class="eyebrow">
+      NOTICE
+    </span>
+
+    <h2 class="section-title">
+      B.POINT의 <span class="o">새로운 소식.</span>
+    </h2>
+
+    <p class="section-sub">
+      클래스 현장, 이벤트 후기, 그리고 우리가 만들어가는
+      변화의 기록들.
+    </p>
+
+
+    <div class="news-grid">
+
+      <!-- DB에 공지가 있을 경우 -->
+      <article class="news-card reveal"
+               th:each="new : ${news}">
+
+        <div class="news-thumb t1">
+
+          <img th:src="@{/assets/헤더 로고.png}"
+               alt=""
+               class="news-mark" />
+
+        </div>
+
+        <div class="news-body">
+
+          <span class="news-tag">
+            NOTICE
+          </span>
+
+          <h4 th:text="${new.title}">
+            공지사항 제목
+          </h4>
+
+          <p th:text="${new.content}">
+            공지사항 내용
+          </p>
+
+          <div class="news-meta"
+               th:text="${new.createdAt}">
+            2026.09.03
+          </div>
+
+        </div>
+
+      </article>
+
+
+      <!-- 공지가 하나도 없을 경우 -->
+      <div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--gray-400)"
+               th:if="${#lists.isEmpty(news)}">
+              등록된 소식이 없습니다.
+    </div>
+
+    </div>
+
+
+    <div style="margin-top:48px;text-align:center">
+
+      <a class="btn btn-line"
+         th:href="@{/news}">
+        전체 소식 보기 →
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<section id="contact">
+
+  <div class="container">
+
+    <span class="eyebrow">
+      CONTACT
+    </span>
+
+    <h2 class="section-title">
+      함께 만들고 싶은 <span class="o">움직임</span>이 있다면.
+    </h2>
+
+    <p class="section-sub"
+       style="color:#9AA1A6">
+      협력 제안, 단체 수업 요청, 클래스 문의 모두 환영합니다.
+    </p>
+
+    <div class="contact-wrap">
+
+      <div class="contact-info">
+
+        <div class="info-row">
+          <span class="lbl">CLASS</span>
+          <span class="val">
+            개인 · 그룹 농구 클래스 신청 및 일정 문의
+          </span>
+        </div>
+
+        <div class="info-row">
+          <span class="lbl">PARTNER</span>
+          <span class="val">
+            학교 · 기업 · 단체 협력 프로그램 제안
+          </span>
+        </div>
+
+        <div class="info-row">
+          <span class="lbl">EVENT</span>
+          <span class="val">
+            이벤트 · 대회 참가 및 단체 행사 의뢰
+          </span>
+        </div>
+
+        <div class="info-row">
+          <span class="lbl">EMAIL</span>
+          <span class="val">
+            b.point.2603@gmail.com
+          </span>
+        </div>
+
+        <div class="info-row">
+          <span class="lbl">INSTAGRAM</span>
+          <span class="val">
+            @b_point_26
+          </span>
+        </div>
+
+      </div>
+
+
+      <form class="cform-wrap"
+            onsubmit="event.preventDefault(); alert('문의가 접수되었습니다.'); this.reset();">
+
+        <div class="field-row">
+
+          <div class="field">
+            <label>이름</label>
+            <input type="text"
+                   required
+                   placeholder="홍길동" />
+          </div>
+
+          <div class="field">
+            <label>연락처 / 이메일</label>
+            <input type="text"
+                   required
+                   placeholder="010-0000-0000" />
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>문의 유형</label>
+
+          <select required>
+
+            <option value="">
+              선택해주세요
+            </option>
+
+            <option>
+              협력
+            </option>
+
+            <option>
+              단체 수업 요청
+            </option>
+
+            <option>
+              질문
+            </option>
+
+            <option>
+              기타
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>문의 내용</label>
+
+          <textarea required
+                    placeholder="요청 사항을 자유롭게 적어주세요."></textarea>
+
+        </div>
+
+
+        <button type="submit">
+          문의 보내기
+        </button>
+
+      </form>
+
+    </div>
+
+
+    <div style="margin-top:48px;text-align:center">
+
+      <a class="btn btn-ghost"
+         th:href="@{/contact}">
+        문의 페이지 자세히 →
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+<div th:replace="~{layout/footer :: footer}"></div>
+
+<script th:src="@{/js/common.js}"></script>
+
+</body>
+</html>

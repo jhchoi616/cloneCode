@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Event — B.POINT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" th:href="@{/css/styles.css}" />
+<style>
+  .concept{padding:120px 0;background:#fff}
+  .concept-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:80px;align-items:center}
+  .concept-grid .left h2{font-family:'Archivo Black',sans-serif;font-size:clamp(32px,4vw,52px);line-height:1.05;letter-spacing:-0.02em;margin-bottom:16px}
+  .concept-grid .left h2 .o{color:var(--orange)}
+  .concept-grid .left p{font-size:17px;color:var(--gray-600);line-height:1.85}
+  .concept-img{background:linear-gradient(135deg,var(--orange) 0%, #C9421A 100%);aspect-ratio:1/1;border-radius:18px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .concept-img img{width:60%;opacity:.85}
+  .types{padding:120px 0;background:#FAFAFA}
+  .types-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
+  .etype{background:#fff;border-radius:14px;padding:36px 30px;border:1px solid var(--gray-200);transition:all .25s ease}
+  .etype:hover{transform:translateY(-4px);border-color:var(--orange);box-shadow:0 16px 40px rgba(0,0,0,.06)}
+  .etype .num{font-family:'Archivo Black',sans-serif;color:var(--orange);font-size:13px;letter-spacing:.22em;margin-bottom:18px}
+  .etype h3{font-family:'Archivo Black',sans-serif;font-size:22px;line-height:1.15;margin-bottom:10px}
+  .etype p{font-size:14.5px;color:var(--gray-600);line-height:1.75;margin-bottom:18px}
+  .etype ul{list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13.5px;color:var(--ink)}
+  .etype li{padding-left:18px;position:relative}
+  .etype li::before{content:"";position:absolute;left:0;top:8px;width:10px;height:2px;background:var(--orange)}
+  .cases{padding:120px 0;background:var(--black);color:#fff}
+  .cases .section-sub{color:#9AA1A6}
+  .case-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:40px}
+  .case{background:#1B252B;border-radius:14px;padding:32px;border:1px solid rgba(255,255,255,.08)}
+  .case .tag{font-family:'Archivo Black',sans-serif;font-size:11px;color:var(--orange);letter-spacing:.22em;margin-bottom:12px;display:block}
+  .case h4{font-family:'Archivo Black',sans-serif;font-size:20px;line-height:1.2;margin-bottom:10px}
+  .case p{font-size:14.5px;color:#C9CED2;line-height:1.7}
+  .case .meta{margin-top:18px;font-size:12.5px;color:var(--gray-400);font-weight:700;letter-spacing:.04em}
+  .event-cta{padding:120px 0;background:#fff}
+  .event-cta .box{background:var(--orange);color:#fff;border-radius:20px;padding:60px 48px;display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+  .event-cta h3{font-family:'Archivo Black',sans-serif;font-size:clamp(28px,3.4vw,40px);line-height:1.1;margin-bottom:14px}
+  .event-cta p{font-size:15.5px;line-height:1.7;opacity:.95}
+  .event-cta .actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:12px}
+  @media (max-width: 880px){.concept-grid{grid-template-columns:1fr;gap:32px} .types-grid{grid-template-columns:1fr} .case-grid{grid-template-columns:1fr} .event-cta .box{grid-template-columns:1fr;padding:36px 28px} .event-cta .actions{justify-content:flex-start}}
+</style>
+</head>
+<body>
+    
+    <div th:replace="~{layout/header :: header}"></div>
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb"><a th:href="@{/}">홈</a><span class="sep">/</span><a th:href="@{/programs}">프로그램</a><span class="sep">/</span>Event</div>
+    <span class="eyebrow">EVENT</span>
+    <h1>성취를 공유하고,<br>즐거움으로 <span class="o">하나 되는</span> 축제.</h1>
+    <p class="lead">승패가 아닌, 각자의 목표를 달성한 모두가 주인공이 되는 농구 이벤트.</p>
+    <div style="margin-top:36px;display:flex;gap:12px;flex-wrap:wrap">
+      <a class="btn btn-primary" th:href="@{/contact}">이벤트 문의하기 →</a>
+      <a class="btn btn-ghost" th:href="@{/news}">진행 사례 보기</a>
+    </div>
+  </div>
+</section>
+
+<section class="concept">
+  <div class="container">
+    <div class="concept-grid">
+      <div class="left reveal">
+        <span class="eyebrow">CONCEPT</span>
+        <h2>모두가 <span class="o">주인공</span>이 되는<br>새로운 축제.</h2>
+        <p>결과 중심의 순위 경쟁에서 탈피, 각자의 목표를 달성한 모두가 박수를 받는 '포용적 경쟁'의 자리.</p>
+        <p>'이긴 사람'이 아니라 '오늘 가장 큰 변화를 만든 사람'이 박수를 받는, 그런 새로운 형식의 농구 페스티벌입니다.</p>
+      </div>
+      <div class="concept-img reveal"><img th:src="@{/assets/헤더 로고.png}" alt="B.POINT" /></div>
+    </div>
+  </div>
+</section>
+
+<section class="types">
+  <div class="container">
+    <span class="eyebrow">EVENT TYPES</span>
+    <h2 class="section-title">세 가지 형태의<br><span class="o">이벤트.</span></h2>
+    <p class="section-sub">참여 인원과 목적에 맞춰 유연하게 구성됩니다.</p>
+    <div class="types-grid">
+      <div class="etype reveal"><div class="num">TYPE 01</div><h3>POINT DAY</h3><p>분기별 정기 페스티벌.</p><ul><li>분기 1회 · 약 4시간</li><li>30~100명 규모</li><li>실력별 트랙 + 미니 토너먼트</li></ul></div>
+      <div class="etype reveal"><div class="num">TYPE 02</div><h3>기업 단체 행사</h3><p>워크숍·팀빌딩용 맞춤 이벤트.</p><ul><li>3~6시간</li><li>20~80명 규모</li><li>맞춤 프로그램 설계</li></ul></div>
+      <div class="etype reveal"><div class="num">TYPE 03</div><h3>학교 · 단체</h3><p>학교·단체용 교육형 이벤트.</p><ul><li>2~4시간</li><li>10~40명 규모</li><li>지자체·기관 협약 가능</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="cases">
+  <div class="container">
+    <span class="eyebrow">CASES</span>
+    <h2 class="section-title" style="color:#fff">함께한 <span class="o">사례들.</span></h2>
+    <p class="section-sub">B.POINT가 진행한 이벤트의 일부 사례입니다.</p>
+    <div class="case-grid">
+
+  <!-- 등록된 뉴스/사례가 있는 경우 -->
+  <div
+      class="case reveal"
+      th:each="news : ${newsList}"
+  >
+    <span
+        class="tag"
+        th:text="${news.category}"
+    >
+      EVENT
+    </span>
+
+    <h4 th:text="${news.title}">
+      이벤트 제목
+    </h4>
+
+    <p th:text="${news.content}">
+      이벤트 내용입니다.
+    </p>
+
+    <div
+        class="meta"
+        th:text="${#temporals.format(news.createdAt, 'yyyy.MM.dd')}"
+    >
+      2026.09.03
+    </div>
+  </div>
+
+  <!-- 등록된 사례가 없는 경우 -->
+  <div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:#9AA1A6" th:if="${#lists.isEmpty(newsList)}">
+    아직 등록된 사례가 없습니다.</div>
+
+    </div>
+  </div>
+</section>
+
+<section class="event-cta">
+  <div class="container">
+    <div class="box reveal">
+      <div><h3>함께 만들고 싶은 <br>이벤트가 있다면?</h3><p>학교·기업·단체용 맞춤 프로그램은 별도 협의로 진행됩니다.</p></div>
+      <div class="actions"><a class="btn btn-dark" th:href="@{/contact}">이벤트 문의하기 →</a></div>
+    </div>
+  </div>
+</section>
+
+<div th:replace="~{layout/footer :: footer}"></div>
+
+<script th:src="@{/js/common.js}"></script>
+</body>
+</html>
