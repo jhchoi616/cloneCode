@@ -1,6 +1,5 @@
-package com.clonecoding.mission.entity;
+package com.clonecoding.mission.global.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -14,24 +13,31 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class News {
+public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Boolean view;
+    // 1 : 공지사항 , 2 : 자료실
+    private Integer type;
     private String title;
-    private String category;
-    private String description;
+    private Boolean isNotice;
+    private String writer;
+    private Integer viewCount;
+    // 파일 역정규화 ( 첨부하는 곳이 공지 뿐임 ) 추후 필요시 정규화하여 분리
+    private String fileName;
+    private String filePath;
+    private String fileUuid;
+    private String fileSize;
+    private String fileContentType;
+    private String fileDownloadUri;
+    private String fileUploadDir;
     @Column(columnDefinition = "TEXT")
     private String content;
-    private String ImageUrl;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    // 공통 컬럼
     private LocalDateTime createdAt;
     private String createdBy;
     private String createdByIp;
     private String modifiedByIp;
     private String modifiedBy;
     private LocalDateTime modifiedAt;
+
 }

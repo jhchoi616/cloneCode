@@ -1,10 +1,8 @@
-package com.clonecoding.mission.controller;
+package com.clonecoding.mission.user.controller;
 
-import com.clonecoding.mission.repository.NewsRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
-// import com.clonecoding.mission.repository.NewsRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,13 +17,13 @@ public class ProgramController {
     @GetMapping("/programs")
     public String programPage(Model model) {
         model.addAttribute("currentUri", "/program");
-        return "programs/program";
+        return "user/programs/program";
     }
 
     @GetMapping("/class")
     public String classPage(Model model) {
         model.addAttribute("currentUri", "/program");
-        return "programs/class";
+        return "user/programs/class";
     }
     
     @GetMapping("/event")
@@ -34,7 +32,7 @@ public class ProgramController {
         // newsRepository
         // model.addAttribute("newsList", newsRepository.find)
 
-        return "programs/event";
+        return "user/programs/event";
     }
     
     

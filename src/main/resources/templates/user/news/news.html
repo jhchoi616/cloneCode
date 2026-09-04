@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>소식 — B.POINT</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&family=Archivo+Black&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+
+    <style>
+        .news-section {
+            padding: 80px 0 120px
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 40px;
+            flex-wrap: wrap
+        }
+
+        .filter {
+            padding: 14px 20px;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--gray-600);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -1px;
+            transition: all .15s ease;
+            background: none;
+            border-top: 0;
+            border-left: 0;
+            border-right: 0;
+            font-family: inherit;
+            text-decoration: none;
+        }
+
+        .filter:hover {
+            color: var(--ink)
+        }
+
+        .filter.active {
+            color: var(--orange);
+            border-bottom-color: var(--orange)
+        }
+
+        .filter .count {
+            display: inline-block;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            margin-left: 6px;
+            font-weight: 700
+        }
+
+        .filter.active .count {
+            background: var(--orange);
+            color: #fff
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px
+        }
+
+        .ncard {
+            background: #fff;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--gray-200);
+            transition: transform .25s ease, box-shadow .25s ease;
+            cursor: pointer;
+        }
+
+        .ncard:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, .08)
+        }
+
+        .nimg {
+            aspect-ratio: 4/3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden
+        }
+
+        .nimg img {
+            width: 40%;
+            opacity: .5;
+            transition: transform .35s ease
+        }
+
+        .ncard:hover .nimg img {
+            transform: scale(1.06)
+        }
+
+        .nimg.a {
+            background: linear-gradient(135deg, #1B252B, #0A0F12)
+        }
+
+        .nimg.b {
+            background: linear-gradient(135deg, var(--orange), #C9421A)
+        }
+
+        .nimg.c {
+            background: linear-gradient(135deg, #2A3439, #0A0F12)
+        }
+
+        .nimg.d {
+            background: linear-gradient(135deg, #1B252B, #384149)
+        }
+
+        .nimg.e {
+            background: linear-gradient(135deg, #C9421A, #7A2611)
+        }
+
+        .nimg.f {
+            background: linear-gradient(135deg, #0A0F12, #22282C)
+        }
+
+        .nbody {
+            padding: 22px 24px 26px
+        }
+
+        .ntag {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: 11px;
+            color: var(--orange);
+            letter-spacing: .2em;
+            margin-bottom: 10px;
+            display: block
+        }
+
+        .ncard h4 {
+            font-size: 17px;
+            font-weight: 800;
+            line-height: 1.45;
+            margin-bottom: 10px
+        }
+
+        .ncard p {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 14px
+        }
+        .empty-msg{text-align:center;padding:80px 20px;color:var(--gray-400)}
+        .nmeta {
+            font-size: 12.5px;
+            color: var(--gray-400);
+            font-weight: 700
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 60px
+        }
+
+        .pagination a {
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+            background: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            color: var(--gray-600);
+            font-family: inherit;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .pagination a:hover {
+            background: #FAFAFA
+        }
+
+        .pagination a.active {
+            background: var(--orange);
+            color: #fff;
+            border-color: var(--orange)
+        }
+
+        @media (max-width: 880px) {
+            .grid {
+                grid-template-columns: 1fr
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div th:replace="~{layout/header :: header }"></div>
+<section class="page-hero">
+
+    <div class="container">
+
+        <div class="breadcrumb">
+
+            <a th:href="@{/}">
+                홈
+            </a>
+
+            <span class="sep">/</span>
+
+            소식
+
+        </div>
+
+        <span class="eyebrow">
+            NEWS &amp; STORIES
+        </span>
+
+        <h1>
+            B.POINT의
+            <span class="o">
+                움직임.
+            </span>
+        </h1>
+
+        <p class="lead">
+            클래스 현장, 이벤트 후기, 그리고 우리가 만들어가는 변화의 기록들.
+        </p>
+
+    </div>
+
+</section>
+
+
+<section class="news-section">
+
+    <div class="container">
+
+        <!-- =========================
+             카테고리
+             ========================= -->
+
+        <div class="filters">
+
+            <!-- 전체 -->
+            <a th:href="@{/news}"
+               class="filter"
+               th:classappend="${selectedCategory == null ? 'active' : ''}">
+
+                전체
+
+                <span class="count"
+                      th:text="${totalCount}">
+                    0
+                </span>
+
+            </a>
+
+            <!-- 고정 카테고리 들 -->
+            <a th:href="@{/news(category=1)}"
+               class="filter"
+               th:classappend="${selectedCategory == 1 ? 'active' : ''}">
+                    CLASS
+                <span class="count"
+                      th:text="${classCount}">
+                    0
+                </span>
+            </a>
+
+            <a th:href="@{/news(category=2)}"
+               class="filter"
+               th:classappend="${selectedCategory == 2 ? 'active' : ''}">
+                    EVENT
+                <span class="count"
+                      th:text="${eventCount}">
+                    0
+                </span>
+            </a>
+
+            <a th:href="@{/news(category=3)}"
+               class="filter"
+               th:classappend="${selectedCategory == 3 ? 'active' : ''}">
+                    STORY
+                <span class="count"
+                      th:text="${storyCount}">
+                    0
+                </span>
+            </a>
+
+        </div>
+
+        <div th:if="${page.totalElements > 0}" class="grid">
+
+            <article class="ncard"
+                     th:each="news, stat : ${newsList}"
+                     th:onclick="|location.href='@{/news/{id}(id=${news.id})}'|">
+
+                <!-- 이미지 -->
+                <div class="nimg"
+                     th:classappend="${'img-' + (stat.index % 6)}">
+
+                    <img th:if="${news.imageUrl != null}"
+                         th:src="${news.imageUrl}"
+                         th:alt="${news.title}">
+
+                    <img th:unless="${news.imageUrl != null}"
+                         th:src="@{/assets/헤더 로고.png}"
+                         alt="B.POINT">
+                </div>
+
+
+                <!-- 내용 -->
+                <div class="nbody">
+
+                    <span class="ntag"
+                          th:text="${news.category == 1 ? 'CLASS' : news.category == 2 ? 'EVENT' : 'STORY'}">
+                        CLASS
+                    </span>
+
+                    <h4 th:text="${news.title}">
+                        뉴스 제목
+                    </h4>
+
+                    <p th:text="${news.excerpt}">
+                        뉴스 요약 내용
+                    </p>
+
+                    <div class="nmeta"
+                         th:text="${#temporals.format(news.createdAt, 'yyyy.MM.dd')}">
+                        2026.05.08
+                    </div>
+
+                </div>
+
+            </article>
+            
+        </div>
+            <!-- 데이터가 없는 경우 -->
+            <div th:if="${#lists.isEmpty(newsList)}"
+            class="empty-msg">
+            아직 등록된 소식이 없습니다.
+        </div>
+
+
+
+        <!-- =========================
+             페이지네이션
+             ========================= -->
+
+        <div class="pagination"
+             th:if="${page.totalPages > 0}">
+
+            <!-- 이전 -->
+            <a th:if="${page.hasPrevious()}"
+               th:href="@{/news(
+                    page=${page.number - 1},
+                    category=${selectedCategory}
+               )}">
+                ‹
+            </a>
+
+
+            <!-- 페이지 번호 -->
+            <a th:each="pageNumber : ${#numbers.sequence(0, page.totalPages - 1)}"
+               th:href="@{/news(
+                    page=${pageNumber},
+                    category=${selectedCategory}
+               )}"
+               th:classappend="${pageNumber == page.number ? 'active' : ''}"
+               th:text="${pageNumber + 1}">
+
+                1
+
+            </a>
+
+
+            <!-- 다음 -->
+            <a th:if="${page.hasNext()}"
+               th:href="@{/news(
+                    page=${page.number + 1},
+                    category=${selectedCategory}
+               )}">
+                ›
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+<div th:replace="~{layout/footer :: footer}"></div>
+
+<script th:src="@{/js/common.js}"></script>
+
+</body>
+</html>

@@ -80,7 +80,10 @@
             font-weight: 500;
             margin-top: 2px;
         }
-
+          .flash{margin-bottom:18px;padding:14px 18px;border-radius:10px;font-size:14px;font-weight:600}
+.flash.success{background:rgba(34,197,94,.15);color:#86efac;border:1px solid rgba(34,197,94,.4)}
+  .flash.error{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.4)}
+  .field .err{display:block;color:#fca5a5;font-size:12.5px;margin-top:6px;font-weight:600}
         .faq-section {
             padding: 120px 0;
             background: #fff;
@@ -242,52 +245,16 @@
                 </div>
 
 
-                <div class="info-row">
-
-                    <span class="lbl">EMAIL</span>
-
-                    <span class="val">
-
-                        <a href="mailto:contact@bpoint.kr">
-                            contact@bpoint.kr
-                        </a>
-
-                        <small>
-                            긴 첨부 자료가 있을 때 권장
-                        </small>
-
-                    </span>
-
-                </div>
-
-
-                <div class="info-row">
-
-                    <span class="lbl">INSTAGRAM</span>
-
-                    <span class="val">
-
-                        <a href="https://www.instagram.com/bpoint.basketball/"
-                           target="_blank"
-                           rel="noopener">
-                            @bpoint.basketball
-                        </a>
-
-                        <small>
-                            가장 빠른 DM 응답
-                        </small>
-
-                    </span>
-
-                </div>
+        <div class="info-row"><span class="lbl">EMAIL</span><span class="val"><a href="mailto:b.point.2603@gmail.com">b.point.2603@gmail.com</a><small>긴 첨부 자료가 있을 때 권장</small></span></div>
+        <div class="info-row"><span class="lbl">INSTAGRAM</span><span class="val"><a href="#">@b_point_26</a><small>가장 빠른 DM 응답</small></span></div>
 
             </div>
 
 
             <!-- FORM -->
             <div class="cform-wrap">
-
-                <form id="contactForm">
+<div id="hidden-msg" style="display:none;" class="flash success">문의가 접수되었습니다. 빠르게 회신드릴게요!</div>
+                <form id="contactForm" th:action="@{/contact}" method="post">
 
                     <div class="field-row">
 
@@ -336,23 +303,23 @@
                             name="type"
                             required>
 
-                            <option value="">
+                            <option value="0">
                                 선택해주세요
                             </option>
 
-                            <option value="협력">
+                            <option value="1">
                                 협력
                             </option>
 
-                            <option value="단체 수업 요청">
+                            <option value="2">
                                 단체 수업 요청
                             </option>
 
-                            <option value="질문">
+                            <option value="3">
                                 질문
                             </option>
 
-                            <option value="기타">
+                            <option value="4">
                                 기타
                             </option>
 
@@ -496,25 +463,54 @@
 <script th:src="@{/js/common.js}"></script>
 
 <script>
-    document.querySelectorAll('.faq-item').forEach(item => {
+    const contactForm = document.getElementById('contactForm');
+    const hiddenMsg = document.querySelector("#hidden-msg");
 
+    document.querySelectorAll('.faq-item').forEach(item => {
         item.addEventListener('click', () => {
             item.classList.toggle('open');
         });
-
     });
 
-
-    document.getElementById('contactForm')
-        .addEventListener('submit', function (event) {
-
+  
+    contactForm.addEventListener('submit', async function (event) {
             event.preventDefault();
 
-            alert('문의가 접수되었습니다. 빠르게 회신드릴게요!');
+            const form = this;
 
-            this.reset();
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form)
+                });
+                // console.log(response)
+                if (!response.ok) {
+                    hiddenMsg.style = "display:none";
+                    throw new Error('문의 접수에 실패했습니다.');
+                }
+
+                const result = await response.json();
+
+                // console.log(result);
+
+                if (result.id != null) {
+                    hiddenMsg.style = "display:block";
+                    alert('문의가 접수되었습니다. 빠르게 회신드릴게요!');
+                    form.reset();
+                }
+
+            } catch (error) {
+                console.error(error);
+                hiddenMsg.style = "display:none";
+                alert('문의 접수 중 오류가 발생했습니다.');
+            }
 
         });
+    hiddenMsg.addEventListener('mouseover',()=>{
+        if(hiddenMsg.style.display=='block'){
+            hiddenMsg.style.display='none';
+        }
+    })
 </script>
 
 </body>

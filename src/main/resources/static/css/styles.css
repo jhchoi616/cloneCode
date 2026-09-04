@@ -75,6 +75,7 @@ footer.site-foot{background:#0A0F12;color:#9AA1A6;padding:60px 0 32px;border-top
 .field label{display:block;font-size:12.5px;font-weight:700;letter-spacing:.1em;color:#C9CED2;margin-bottom:8px;text-transform:uppercase}
 .field input,.field select,.field textarea{width:100%;padding:14px 16px;border-radius:10px;background:rgba(255,255,255,.04);color:#fff;border:1px solid rgba(255,255,255,.12);font-family:inherit;font-size:15px;outline:none;transition:border-color .15s ease}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--orange)}
+.field select option{background:#1a1a1a;color:#fff}
 .field textarea{resize:vertical;min-height:120px}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .cform-wrap button[type=submit]{width:100%;background:var(--orange);color:#fff;padding:16px;border-radius:10px;border:0;font-size:15px;font-weight:800;letter-spacing:.05em;cursor:pointer;transition:background .2s ease}

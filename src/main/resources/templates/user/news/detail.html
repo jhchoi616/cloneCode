@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title th:text="${news.title + ' — B.POINT'}">뉴스 상세보기 — B.POINT</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&family=Archivo+Black&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" th:href="@{/css/styles.css}" />
+
+<style>
+  .post-page{
+    padding:140px 0 100px;
+    background:#fff;
+    min-height:60vh
+  }
+
+  .post-page .container{
+    max-width:960px
+  }
+
+  .post-back{
+    font-size:13px;
+    color:var(--gray-400);
+    margin-bottom:28px;
+    font-weight:600;
+    letter-spacing:.04em
+  }
+
+  .post-back a:hover{
+    color:var(--orange)
+  }
+
+  .post-header{
+    padding-bottom:24px;
+    border-bottom:1px solid var(--gray-200)
+  }
+
+  .post-header h1{
+    font-size:clamp(24px,3vw,32px);
+    font-weight:800;
+    line-height:1.35;
+    letter-spacing:-0.02em;
+    color:var(--ink);
+    margin-bottom:14px
+  }
+
+  .post-header h1 .tag{
+    color:var(--ink);
+    font-weight:800;
+    margin-right:6px
+  }
+
+  .post-meta{
+    font-size:13.5px;
+    color:var(--gray-400)
+  }
+
+  .post-image{
+    margin:36px 0 28px;
+    border-radius:8px;
+    overflow:hidden;
+    aspect-ratio:16/9;
+    background:linear-gradient(135deg,#1B252B,var(--black));
+    display:flex;
+    align-items:center;
+    justify-content:center
+  }
+
+  .post-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover
+  }
+
+  .post-body{
+    padding:0 0 48px;
+    border-bottom:1px solid var(--gray-200)
+  }
+
+  .post-body p{
+    font-size:15.5px;
+    line-height:1.95;
+    color:var(--gray-800);
+    margin-bottom:14px
+  }
+
+  .post-body strong{
+    color:var(--ink);
+    font-weight:700
+  }
+
+  .post-nav{
+    padding:8px 0 0
+  }
+
+  .post-nav .row{
+    display:grid;
+    grid-template-columns:64px 1fr;
+    gap:24px;
+    padding:18px 0;
+    border-bottom:1px solid var(--gray-200);
+    font-size:14px
+  }
+
+  .post-nav .row:last-child{
+    border-bottom:0
+  }
+
+  .post-nav .dir{
+    font-weight:800;
+    color:var(--ink)
+  }
+
+  .post-nav .row a{
+    color:var(--gray-600);
+    transition:color .15s ease
+  }
+
+  .post-nav .row a:hover{
+    color:var(--orange)
+  }
+
+  .post-nav .cat{
+    color:var(--ink);
+    font-weight:700;
+    margin-right:4px
+  }
+
+  .post-actions{
+    margin-top:40px;
+    display:flex;
+    justify-content:flex-end;
+    gap:8px
+  }
+
+  @media (max-width: 880px){
+    .post-page{
+      padding:110px 0 60px
+    }
+
+    .post-nav .row{
+      grid-template-columns:60px 1fr;
+      gap:12px;
+      padding:14px 0
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div th:replace="~{layout/header :: header}"></div>
+
+<section class="post-page">
+
+  <div class="container">
+
+    <!-- breadcrumb -->
+    <div class="post-back">
+
+      <a th:href="@{/}">
+        홈
+      </a>
+
+      &nbsp;/&nbsp;
+
+      <a th:href="@{/news}">
+        소식
+      </a>
+
+      &nbsp;/&nbsp;
+
+      <span
+        th:text="${news.category == 1 ? '클래스 후기' :
+                  news.category == 2 ? '이벤트' :
+                  news.category == 3 ? '스토리' : '소식'}">
+        클래스 후기
+      </span>
+
+    </div>
+
+
+    <!-- header -->
+    <div class="post-header">
+
+      <h1>
+
+        <span
+          class="tag"
+          th:text="${news.category == 1 ? '[CLASS]' :
+                    news.category == 2 ? '[EVENT]' :
+                    news.category == 3 ? '[STORY]' : ''}">
+          [CLASS]
+        </span>
+
+        <span th:text="${news.title}">
+          첫 클래스를 마치며 — 작은 떨림이 만든 큰 변화
+        </span>
+
+      </h1>
+
+
+      <div
+        class="post-meta"
+        th:text="${news.createdAt != null ?
+                  #temporals.format(news.createdAt, 'yyyy-MM-dd') :
+                  ''}">
+        2026-05-08
+      </div>
+
+    </div>
+
+
+    <!-- image -->
+    <div
+      class="post-image">
+
+      <img
+        th:src="${news.imageUrl != null and !#strings.isEmpty(news.imageUrl) ? news.imageUrl : '/assets/헤더 로고.png'}"
+        th:alt="${news.title}" />
+
+    </div>
+
+
+    <!-- content -->
+    <div
+      class="post-body"
+      th:utext="${news.content}">
+      
+      <p>
+        B.POINT의 첫 번째 그룹 클래스를 마쳤습니다.
+      </p>
+
+    </div>
+
+
+    <!-- 이전글 / 다음글 -->
+    <nav class="post-nav">
+
+      <!-- 이전글 -->
+      <div
+        class="row"
+        th:if="${previousNews != null}">
+
+        <div class="dir">
+          이전글
+        </div>
+
+        <a
+          th:href="@{/news/{id}(id=${previousNews.id})}">
+
+          <span
+            class="cat"
+            th:text="${previousNews.category == 1 ? '[CLASS]' :
+                      previousNews.category == 2 ? '[EVENT]' :
+                      previousNews.category == 3 ? '[STORY]' : ''}">
+            [STORY]
+          </span>
+
+          <span th:text="${previousNews.title}">
+            이전 뉴스 제목
+          </span>
+
+        </a>
+
+      </div>
+
+
+      <!-- 다음글 -->
+      <div
+        class="row"
+        th:if="${nextNews != null}">
+
+        <div class="dir">
+          다음글
+        </div>
+
+        <a
+          th:href="@{/news/{id}(id=${nextNews.id})}">
+
+          <span
+            class="cat"
+            th:text="${nextNews.category == 1 ? '[CLASS]' :
+                      nextNews.category == 2 ? '[EVENT]' :
+                      nextNews.category == 3 ? '[STORY]' : ''}">
+            [EVENT]
+          </span>
+
+          <span th:text="${nextNews.title}">
+            다음 뉴스 제목
+          </span>
+
+        </a>
+
+      </div>
+
+    </nav>
+
+
+    <!-- 목록 -->
+    <div class="post-actions">
+
+      <a
+        class="btn btn-line"
+        th:href="@{/news}">
+        목록 →
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+<div th:replace="~{layout/footer :: footer}"></div>
+
+<script th:src="@{/js/common.js}"></script>
+
+</body>
+</html>
