@@ -1,0 +1,12 @@
+services:
+  app:
+    image: clonecode:1.0
+    container_name: clonecode-app
+
+    ports:
+      - "8080:8080"
+
+    env_file:
+      - .env
+
+    restart: unless-stopped
