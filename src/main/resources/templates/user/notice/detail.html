@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title th:text="${post.title + ' — B.POINT'}">
+    공지사항 — B.POINT
+  </title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&family=Archivo+Black&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+
+  <style>
+    .post-page{
+      padding:140px 0 100px;
+      background:#fff;
+      min-height:60vh
+    }
+
+    .post-page .container{
+      max-width:960px
+    }
+
+    .post-back{
+      font-size:13px;
+      color:var(--gray-400);
+      margin-bottom:28px;
+      font-weight:600;
+      letter-spacing:.04em
+    }
+
+    .post-back a:hover{
+      color:var(--orange)
+    }
+
+    .post-header{
+      padding-bottom:24px;
+      border-bottom:1px solid var(--gray-200)
+    }
+
+    .post-header h1{
+      font-size:clamp(24px,3vw,32px);
+      font-weight:800;
+      line-height:1.35;
+      letter-spacing:-0.02em;
+      color:var(--ink);
+      margin-bottom:14px
+    }
+
+    .post-header h1 .tag{
+      color:var(--ink);
+      font-weight:800;
+      margin-right:6px
+    }
+
+    .post-meta{
+      font-size:13.5px;
+      color:var(--gray-400)
+    }
+
+    .post-attach{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      padding:18px 0;
+      border-bottom:1px solid var(--gray-200);
+      font-size:14px
+    }
+
+    .post-attach .lbl{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-weight:700;
+      color:var(--ink);
+      min-width:90px
+    }
+
+    .post-attach .lbl::before{
+      content:"📎";
+      font-size:14px
+    }
+
+    .post-attach .div{
+      width:1px;
+      height:16px;
+      background:var(--gray-200)
+    }
+
+    .post-attach a{
+      color:var(--ink);
+      font-weight:500
+    }
+
+    .post-attach a:hover{
+      color:var(--orange);
+      text-decoration:underline
+    }
+
+    .post-attach .size{
+      color:var(--gray-400);
+      margin-left:4px;
+      font-size:13px
+    }
+
+    .post-body{
+      padding:36px 0 48px;
+      border-bottom:1px solid var(--gray-200)
+    }
+
+    .post-body p{
+      font-size:15.5px;
+      line-height:1.95;
+      color:var(--gray-800);
+      margin-bottom:14px
+    }
+
+    .post-body strong{
+      color:var(--ink);
+      font-weight:700
+    }
+
+    .post-nav{
+      padding:8px 0 0
+    }
+
+    .post-nav .row{
+      display:grid;
+      grid-template-columns:64px 1fr;
+      gap:24px;
+      padding:18px 0;
+      border-bottom:1px solid var(--gray-200);
+      font-size:14px
+    }
+
+    .post-nav .row:last-child{
+      border-bottom:0
+    }
+
+    .post-nav .dir{
+      font-weight:800;
+      color:var(--ink)
+    }
+
+    .post-nav .row a:hover{
+      color:var(--orange)
+    }
+
+    .post-nav .cat{
+      color:var(--ink);
+      font-weight:700;
+      margin-right:4px
+    }
+
+    .post-actions{
+      margin-top:40px;
+      display:flex;
+      justify-content:flex-end;
+      gap:8px
+    }
+
+    @media (max-width:880px){
+      .post-page{
+        padding:110px 0 60px
+      }
+
+      .post-attach{
+        flex-wrap:wrap;
+        gap:10px
+      }
+
+      .post-attach .div{
+        display:none
+      }
+
+      .post-nav .row{
+        grid-template-columns:60px 1fr;
+        gap:12px;
+        padding:14px 0
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div th:replace="~{layout/header :: header}"></div> 
+
+<section class="post-page">
+
+  <div class="container">
+
+    <!-- 경로 -->
+
+    <div class="post-back">
+
+      <a th:href="@{/}">
+        홈
+      </a>
+
+      &nbsp;/&nbsp;
+
+      <a th:href="@{/notice}">
+        공지 · 자료실
+      </a>
+
+      &nbsp;/&nbsp;
+
+      <span
+        th:text="${post.type == 1 ? '공지사항' : '자료실'}">
+        자료실
+      </span>
+
+    </div>
+
+
+    <!-- 제목 -->
+
+    <div class="post-header">
+
+      <h1>
+
+        <span
+          class="tag"
+          th:text="${post.type == 1 ? '[공지]' : '[자료]'}">
+          [자료]
+        </span>
+
+        <span th:text="${post.title}">
+          제목
+        </span>
+
+      </h1>
+
+
+      <div
+        class="post-meta"
+        th:text="${post.date != null
+          ? #temporals.format(post.date, 'yyyy-MM-dd')
+          : (post.createdAt != null
+            ? #temporals.format(post.createdAt, 'yyyy-MM-dd')
+            : '')}">
+        2026-04-18
+      </div>
+
+    </div>
+
+
+    <!-- 첨부파일 -->
+    <!-- 파일이 있을 때만 표시 -->
+
+    <div
+      class="post-attach"
+      th:if="${post.fileName != null and !#strings.isEmpty(post.fileName)}">
+
+      <div class="lbl">
+        첨부파일
+      </div>
+
+      <div class="div"></div>
+
+      <div>
+
+        <a
+          th:href="@{/notice/file/{id}(id=${post.id})}"
+          th:text="${post.fileName}">
+          첨부파일.pdf
+        </a>
+
+        <span
+          class="size"
+          th:if="${post.fileSize != null}"
+          th:text="'(' + ${post.fileSize} + ' bytes)'">
+          (12.4 MB)
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- 본문 -->
+
+    <div
+      class="post-body"
+      th:text="${post.content}">
+
+      <p>
+        게시글 내용입니다.
+      </p>
+
+    </div>
+
+
+    <!-- 이전글 / 다음글 -->
+
+    <nav class="post-nav">
+
+      <!-- 이전글 -->
+
+      <div
+        class="row"
+        th:if="${previousPost != null}">
+
+        <div class="dir">
+          이전글
+        </div>
+
+        <a
+          th:href="@{/notice/{id}(id=${previousPost.id})}">
+
+          <span
+            class="cat"
+            th:text="${previousPost.type == 1 ? '[공지]' : '[자료]'}">
+            [공지]
+          </span>
+
+          <span th:text="${previousPost.title}">
+            이전 게시글
+          </span>
+
+        </a>
+
+      </div>
+
+
+      <!-- 이전글이 없을 때 -->
+
+      <div
+        class="row"
+        th:if="${previousPost == null}">
+
+        <div class="dir">
+          이전글
+        </div>
+
+        <span style="color:var(--gray-400)">
+          이전글이 없습니다.
+        </span>
+
+      </div>
+
+
+      <!-- 다음글 -->
+
+      <div
+        class="row"
+        th:if="${nextPost != null}">
+
+        <div class="dir">
+          다음글
+        </div>
+
+        <a
+          th:href="@{/notice/{id}(id=${nextPost.id})}">
+
+          <span
+            class="cat"
+            th:text="${nextPost.type == 1 ? '[공지]' : '[자료]'}">
+            [자료]
+          </span>
+
+          <span th:text="${nextPost.title}">
+            다음 게시글
+          </span>
+
+        </a>
+
+      </div>
+
+
+      <!-- 다음글이 없을 때 -->
+
+      <div
+        class="row"
+        th:if="${nextPost == null}">
+
+        <div class="dir">
+          다음글
+        </div>
+
+        <span style="color:var(--gray-400)">
+          다음글이 없습니다.
+        </span>
+
+      </div>
+
+    </nav>
+
+
+    <!-- 목록 버튼 -->
+
+    <div class="post-actions">
+
+      <a
+        class="btn btn-line"
+        th:href="@{/notice}">
+        목록 →
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<div th:replace="~{layout/footer :: footer}"></div>
+
+
+<script th:src="@{/js/common.js}"></script>
+
+</body>
+</html>

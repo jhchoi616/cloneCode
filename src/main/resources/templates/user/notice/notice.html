@@ -737,12 +737,7 @@
                                 and !#strings.isEmpty(post.fileName)}">
 
                     <span
-                            th:text="${#strings.toUpperCase(
-                                #strings.substringAfterLast(
-                                    post.fileName,
-                                    '.'
-                                )
-                            ) + ' ↓'}">
+                            th:text="${#strings.toUpperCase(post.fileExtension) + ' ↓'}">
 
                         PDF ↓
 

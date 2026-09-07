@@ -1,9 +1,21 @@
 package com.clonecoding.mission.user.controller;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
@@ -12,8 +24,10 @@ import com.clonecoding.mission.user.service.NoticeService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @Controller
@@ -58,10 +72,73 @@ public class NoticeController {
         return "user/notice/notice";
     }
 
-    // @GetMapping
-    // public String getNotices(Model model) {
-    //     model.addAttribute("currentUri", "/notice");
-    //     // model.addAttribute("posts",postRepository.findByTypeOrderByIdDesc(1));
-    //     return "user/notice/notice";
-    // }
+    @GetMapping("/{id}")
+    public String getNotices( @PathVariable Long id,Model model) {
+        Post post = noticeService.findById(id);
+        model.addAttribute("post", post);
+        model.addAttribute("currentUri", "/notice");
+        // model.addAttribute("posts",postRepository.findByTypeOrderByIdDesc(1));
+        return "user/notice/detail";
+    }
+
+    @GetMapping("/file/{id}")
+    public ResponseEntity<Resource> downloadFile(
+            @PathVariable Long id
+    ) throws IOException {
+
+        Post post = noticeService.findById(id);
+
+
+        if (post.getFilePath() == null) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "첨부파일이 없습니다."
+            );
+        }
+
+
+        Path path = Paths.get(post.getFilePath());
+
+
+        Resource resource =
+                new UrlResource(
+                        path.toUri()
+                );
+
+
+        if (!resource.exists()) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "파일을 찾을 수 없습니다."
+            );
+        }
+
+
+        String fileName =
+                URLEncoder.encode(
+                        post.getFileName(),
+                        StandardCharsets.UTF_8
+                ).replaceAll("\\+", "%20");
+
+
+        return ResponseEntity.ok()
+
+                .contentType(
+                        MediaType.parseMediaType(
+                                post.getFileContentType()
+                                        != null
+                                        ? post.getFileContentType()
+                                        : MediaType.APPLICATION_OCTET_STREAM_VALUE
+                        )
+                )
+
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename*=UTF-8''" + fileName
+                )
+
+                .body(resource);
+    }
 }

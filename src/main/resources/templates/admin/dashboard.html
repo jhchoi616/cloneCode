@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>대시보드 — B.POINT Admin</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&family=Archivo+Black&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" th:href="@{/css/admin-styles.css}" />
+</head>
+
+<body>
+
+<div th:replace="~{layout/admin/sidebar :: sidebar}"></div>
+
+
+<main class="app">
+
+  <!-- 상단 -->
+  <div class="topbar">
+    <div>
+      <h1>대시보드</h1>
+      <div class="crumbs">관리자 / 대시보드</div>
+    </div>
+  </div>
+
+
+  <div class="content">
+
+    <!-- =========================
+         통계
+    ========================== -->
+    <div class="stat-grid">
+
+      <!-- 공지·자료 -->
+      <div class="stat">
+        <div class="lbl">공지·자료</div>
+
+        <div class="val"
+             th:text="${noticeCount != null ? noticeCount : 0}">
+          0
+        </div>
+
+        <div class="delta">
+          전체 등록 수
+        </div>
+      </div>
+
+
+      <!-- 소식 -->
+      <div class="stat">
+        <div class="lbl">소식</div>
+
+        <div class="val"
+             th:text="${newsCount != null ? newsCount : 0}">
+          0
+        </div>
+
+        <div class="delta">
+          전체 게시글
+        </div>
+      </div>
+
+
+      <!-- 문의 -->
+      <div class="stat">
+        <div class="lbl">전체 문의</div>
+
+        <div class="val">
+          <span class="o"
+                th:text="${inquiryCount != null ? inquiryCount : 0}">
+            0
+          </span>
+        </div>
+
+        <div class="delta">
+          누적 접수 건수
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- =========================
+         최근 문의
+    ========================== -->
+    <div class="panel">
+
+      <div class="panel-head">
+
+        <h2>최근 문의</h2>
+
+        <div class="actions">
+          <a
+            class="btn btn-line btn-sm"
+            th:href="@{/admin/inquiries}">
+            전체 보기 →
+          </a>
+        </div>
+
+      </div>
+
+
+      <div class="panel-body">
+
+        <table class="dt">
+
+          <thead>
+          <tr>
+            <th style="width:120px">유형</th>
+            <th>이름</th>
+            <th>내용</th>
+            <th style="width:140px">접수일</th>
+            <th></th>
+          </tr>
+          </thead>
+
+
+          <tbody>
+
+          <!-- 문의가 없는 경우 -->
+          <tr th:if="${#lists.isEmpty(recentInquiries)}">
+
+            <td colspan="5">
+
+              <div class="empty">
+
+                <div class="ico">✉</div>
+
+                <p>접수된 문의가 없습니다.</p>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+
+          <!-- 문의 목록 -->
+          <tr
+            th:each="inquiry : ${recentInquiries}"
+            th:onclick="|location.href='@{/admin/inquiries/{id}(id=${inquiry.id})}'|">
+
+            <td>
+
+              <span
+                class="badge-tag pending"
+                th:text="${inquiry.type}">
+                문의
+              </span>
+
+            </td>
+
+
+            <td
+              style="font-weight:700"
+              th:text="${inquiry.createdBy}">
+              이름
+            </td>
+
+
+            <td
+              style="color:var(--soft);
+                     max-width:380px;
+                     white-space:nowrap;
+                     overflow:hidden;
+                     text-overflow:ellipsis"
+              th:text="${inquiry.message}">
+              문의 내용
+            </td>
+
+
+            <td
+              style="color:var(--muted)"
+              th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}">
+              2026-01-01 00:00
+            </td>
+
+
+            <td class="actions">
+
+              <a
+                class="btn btn-line btn-sm"
+                th:href="@{/admin/inquiries/{id}(id=${inquiry.id})}"
+                onclick="event.stopPropagation()">
+                보기 →
+              </a>
+
+            </td>
+
+          </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================
+         공지 / 소식
+    ========================== -->
+    <div
+      style="display:grid;
+             grid-template-columns:1fr 1fr;
+             gap:20px">
+
+
+      <!-- =========================
+           최근 공지·자료
+      ========================== -->
+      <div class="panel">
+
+        <div class="panel-head">
+
+          <h2>최근 공지·자료</h2>
+
+          <a
+            class="btn btn-line btn-sm"
+            th:href="@{/admin/notices}">
+            관리 →
+          </a>
+
+        </div>
+
+
+        <div class="panel-body">
+
+          <table class="dt">
+
+            <thead>
+
+            <tr>
+              <th style="width:80px">유형</th>
+              <th>제목</th>
+              <th style="width:120px">날짜</th>
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            <!-- 데이터 없음 -->
+            <tr th:if="${#lists.isEmpty(recentNotices)}">
+
+              <td colspan="3">
+
+                <div class="empty">
+                  <p>등록된 공지가 없습니다.</p>
+                </div>
+
+              </td>
+
+            </tr>
+
+
+            <!-- 공지 목록 -->
+            <tr
+              th:each="notice : ${recentNotices}"
+              th:onclick="|location.href='@{/admin/notices}'|">
+
+              <td>
+
+                <span
+                  class="badge-tag"
+                  th:classappend="${notice.type == 2} ? ' data' : ' notice'"
+                  th:text="${notice.type == 2 ? '자료' : '공지'}">
+                  공지
+                </span>
+
+              </td>
+
+
+              <td
+                style="font-weight:600"
+                th:text="${notice.title}">
+                공지 제목
+              </td>
+
+
+              <td
+                style="color:var(--muted)"
+                th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}">
+                2026-01-01
+              </td>
+
+            </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           최근 소식
+      ========================== -->
+      <div class="panel">
+
+        <div class="panel-head">
+
+          <h2>최근 소식</h2>
+
+          <a
+            class="btn btn-line btn-sm"
+            th:href="@{/admin/news}">
+            관리 →
+          </a>
+
+        </div>
+
+
+        <div class="panel-body">
+
+          <table class="dt">
+
+            <thead>
+
+            <tr>
+              <th style="width:80px">카테고리</th>
+              <th>제목</th>
+              <th style="width:120px">날짜</th>
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            <!-- 데이터 없음 -->
+            <tr th:if="${#lists.isEmpty(recentNews)}">
+
+              <td colspan="3">
+
+                <div class="empty">
+                  <p>등록된 소식이 없습니다.</p>
+                </div>
+
+              </td>
+
+            </tr>
+
+
+            <!-- 소식 목록 -->
+            <tr
+              th:each="news : ${recentNews}"
+              th:onclick="|location.href='@{/admin/news}'|">
+
+              <td>
+
+                <span
+                  class="badge-tag"
+                  th:text="${news.category == 1 ? 'CLASS': news.category == 2 ? 'EVENT': 'STORY'}">
+                  CATEGORY
+                </span>
+
+              </td>
+
+
+              <td
+                style="font-weight:600"
+                th:text="${news.title}">
+                소식 제목
+              </td>
+
+
+              <td
+                style="color:var(--muted)"
+                th:text="${#temporals.format(news.createdAt, 'yyyy-MM-dd')}">
+                2026-01-01
+              </td>
+
+            </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<script th:src="@{/js/admin-common.js}"></script>
+
+
+</body>
+</html>

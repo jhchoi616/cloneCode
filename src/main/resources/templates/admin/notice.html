@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>공지·자료실 관리 — B.POINT Admin</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&family=Archivo+Black&display=swap"
+    rel="stylesheet"
+  >
+
+  <link
+    rel="stylesheet"
+    th:href="@{/css/admin-styles.css}"
+  />
+
+</head>
+
+
+<body>
+
+
+<!-- 관리자 사이드바 -->
+<div th:replace="~{layout/admin/sidebar :: sidebar}"></div>
+
+
+<main class="app">
+
+
+  <!-- =========================
+       상단
+  ========================== -->
+
+  <div class="topbar">
+
+    <div>
+
+      <h1>공지·자료실</h1>
+
+      <div class="crumbs">
+        관리자 / 공지·자료실
+      </div>
+
+    </div>
+
+
+    <div class="right">
+
+      <!-- 새 글 작성 : 모달 오픈 -->
+      <button
+        type="button"
+        class="btn btn-primary"
+        onclick="openModal()">
+
+        + 새 글 작성
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================
+       본문
+  ========================== -->
+
+  <div class="content">
+
+
+    <div class="panel">
+
+
+      <!-- =========================
+           패널 헤더
+      ========================== -->
+
+      <div class="panel-head">
+
+
+        <h2>
+
+          전체 글
+
+          <span
+            style="color:var(--muted);font-weight:600;margin-left:4px"
+            th:text="'(' + ${#lists.size(notices)} + '건)'">
+
+            (0건)
+
+          </span>
+
+        </h2>
+
+
+
+        <div class="actions">
+
+
+          <!-- 유형 필터 -->
+
+          <select
+            id="filter"
+            class="btn btn-line btn-sm"
+            style="padding-right:24px">
+
+            <option value="all">
+              전체 유형
+            </option>
+
+            <option value="notice">
+              공지
+            </option>
+
+            <option value="data">
+              자료
+            </option>
+
+          </select>
+
+
+
+          <!-- 제목 검색 -->
+
+          <input
+            type="text"
+            id="search"
+            class="btn btn-line btn-sm"
+            placeholder="제목 검색"
+            style="font-weight:500;min-width:200px"
+          />
+
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- =========================
+           테이블
+      ========================== -->
+
+      <div class="panel-body">
+
+
+        <table
+          class="dt"
+          id="tbl">
+
+
+          <thead>
+
+          <tr>
+
+            <th style="width:80px">
+              유형
+            </th>
+
+            <th>
+              제목
+            </th>
+
+            <th style="width:120px">
+              날짜
+            </th>
+
+            <th style="width:200px">
+            </th>
+
+          </tr>
+
+          </thead>
+
+
+
+          <tbody>
+
+
+          <!-- =========================
+               등록된 글이 없는 경우
+          ========================== -->
+
+          <tr
+            th:if="${#lists.isEmpty(notices)}">
+
+            <td colspan="4">
+
+
+              <div class="empty">
+
+
+                <div class="ico">
+                  ▤
+                </div>
+
+
+                <p>
+                  등록된 글이 없습니다.
+                </p>
+
+
+                <!-- 새 글 작성 : 모달 오픈 -->
+
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm"
+                  onclick="openModal()">
+
+                  + 새 글 작성
+
+                </button>
+
+
+              </div>
+
+
+            </td>
+
+          </tr>
+
+
+
+          <!-- =========================
+               공지 / 자료 목록
+          ========================== -->
+
+          <tr
+            th:each="notice : ${notices}"
+
+            th:data-id="${notice.id}"
+            th:data-type="${notice.type}"
+            th:data-title="${notice.title}"
+
+            th:data-date="${notice.date}"
+
+            th:data-content="${notice.content}"
+            th:data-file="${notice.fileName}"
+          >
+
+
+            <!-- 유형 -->
+
+            <td>
+
+              <span
+                class="badge-tag"
+
+                th:classappend="${notice.type == 2} ? 'data' : 'notice'"
+
+                th:text="${notice.type == 2} ? '자료실' : '공지사항'">
+
+                공지사항
+
+              </span>
+
+            </td>
+
+
+
+            <!-- 제목 -->
+
+            <td
+              style="font-weight:600">
+
+              <span
+                th:text="${notice.title}">
+
+                제목
+
+              </span>
+
+            </td>
+
+
+
+            <!-- 날짜 -->
+
+            <td
+              style="color:var(--muted)"
+
+              th:text="${notice.date != null ? #temporals.format(notice.date, 'yyyy-MM-dd') : ''}">
+
+              2026-01-01
+
+            </td>
+
+
+
+            <!-- 버튼 -->
+
+            <td class="actions">
+
+
+              <!-- 수정 -->
+
+              <button
+                type="button"
+                class="btn btn-line btn-sm"
+                onclick="editItem(this)">
+
+                수정
+
+              </button>
+
+
+
+              <!-- 삭제 -->
+
+              <form
+                th:action="@{/admin/notices/delete/{id}(id=${notice.id})}"
+                method="post"
+
+                style="display:inline"
+
+                onsubmit="return confirm('이 글을 삭제할까요?');"
+              >
+
+                <button
+                  type="submit"
+                  class="btn btn-danger btn-sm">
+
+                  삭제
+
+                </button>
+
+              </form>
+
+
+            </td>
+
+
+          </tr>
+
+
+          </tbody>
+
+
+        </table>
+
+
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     공지 / 자료 작성 및 수정 모달
+====================================================== -->
+
+<div
+  class="modal-back"
+  id="modal">
+
+
+  <div class="modal">
+
+
+    <!-- =========================
+         모달 헤더
+    ========================== -->
+
+    <div class="modal-head">
+
+
+      <h3 id="mTitle">
+        새 공지·자료 작성
+      </h3>
+
+
+      <button
+        type="button"
+        class="close"
+        onclick="closeModal()">
+
+        ✕
+
+      </button>
+
+
+    </div>
+
+
+
+    <!-- =========================
+         모달 본문
+    ========================== -->
+
+    <div class="modal-body">
+
+
+      <!--
+
+        저장 요청
+
+        새 글:
+        POST /admin/notices/save
+
+        수정:
+        id가 hidden input에 들어감
+
+      -->
+
+      <form
+        id="form"
+        th:action="@{/admin/notices/save}"
+        method="post"
+        enctype="multipart/form-data">
+
+
+        <!-- 수정할 때 사용할 ID -->
+
+        <input
+          type="hidden"
+          id="f-id"
+          name="id"
+        />
+
+
+
+        <!-- 유형 -->
+
+        <div class="fld">
+
+          <label>
+            유형
+          </label>
+
+
+          <select
+            id="f-type"
+            name="type"
+            required>
+
+            <option value="1">공지사항</option>
+        <option value="2">자료실</option>
+
+          </select>
+
+        </div>
+
+
+
+        <!-- 제목 -->
+
+        <div class="fld">
+
+          <label>
+            제목 *
+          </label>
+
+
+          <input
+            type="text"
+            id="f-title"
+            name="title"
+            required
+            placeholder="제목을 입력하세요"
+          />
+
+        </div>
+
+
+
+        <!-- 날짜 -->
+
+        <div class="fld">
+
+          <label>
+            날짜
+          </label>
+
+
+          <input
+            type="date"
+            id="f-date"
+            name="date"
+          />
+
+        </div>
+
+
+
+        <!-- 본문 -->
+
+        <div class="fld">
+
+          <label>
+            본문
+          </label>
+
+
+          <textarea
+            id="f-content"
+            name="content"
+            placeholder="본문 내용 또는 자료에 대한 설명을 입력하세요."
+          ></textarea>
+
+        </div>
+
+
+
+        <!-- 첨부 파일 -->
+
+<div class="fld">
+
+  <label>
+    첨부 파일 (자료용, 선택)
+  </label>
+
+  <input
+    type="file"
+    id="f-file"
+    name="uploadFile"
+    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.png,.jpeg,.jpg"
+  />
+
+  <div
+    id="current-file"
+    style="margin-top:8px;color:var(--muted);font-size:13px;display:none">
+  </div>
+
+</div>
+
+      </form>
+
+
+    </div>
+
+
+
+    <!-- =========================
+         모달 하단
+    ========================== -->
+
+    <div class="modal-foot">
+
+
+      <!-- 삭제 -->
+
+      <button
+        type="button"
+        class="btn btn-danger btn-sm"
+        id="delBtn"
+
+        onclick="removeItem()"
+
+        style="margin-right:auto;display:none">
+
+        삭제
+
+      </button>
+
+
+
+      <!-- 취소 -->
+
+      <button
+        type="button"
+        class="btn btn-line"
+        onclick="closeModal()">
+
+        취소
+
+      </button>
+
+
+
+      <!-- 저장 -->
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        onclick="save()">
+
+        저장
+
+      </button>
+
+
+    </div>
+
+
+  </div>
+
+
+</div>
+
+
+
+<!-- 공통 JS -->
+
+<script th:src="@{/js/admin-common.js}"></script>
+
+
+
+<script>
+
+
+  /* =====================================================
+     관리자 인증 / 사이드바
+  ====================================================== */
+
+  if (typeof requireAuth === 'function') {
+    requireAuth();
+  }
+
+
+  if (typeof renderSidebar === 'function') {
+    renderSidebar('notices');
+  }
+
+
+
+  /* =====================================================
+     DOM
+  ====================================================== */
+
+  const modal = document.getElementById('modal');
+
+  const form = document.getElementById('form');
+
+  const filter = document.getElementById('filter');
+
+  const search = document.getElementById('search');
+
+
+
+  /* =====================================================
+     새 글 작성 모달
+  ====================================================== */
+
+  function openModal() {
+
+
+    /*
+     * 수정 모달에서 사용했던 값 초기화
+     */
+
+    document.getElementById('mTitle').textContent =
+      '새 공지·자료 작성';
+
+
+    document.getElementById('f-id').value =
+      '';
+
+
+    document.getElementById('f-type').value =
+      1;
+
+
+    document.getElementById('f-title').value =
+      '';
+
+
+    /*
+     * 오늘 날짜 기본값
+     */
+
+    document.getElementById('f-date').value =
+      new Date().toISOString().slice(0, 10);
+// 업로드 파일 초기화
+  document.getElementById('f-file').value =
+    '';
+
+  document.getElementById('current-file').textContent =
+    '';
+
+  document.getElementById('current-file').style.display =
+    'none';
+
+    document.getElementById('f-content').value =
+      '';
+
+
+    document.getElementById('f-file').value =
+      '';
+
+
+    /*
+     * 새 글이므로 삭제 버튼 숨김
+     */
+
+    document.getElementById('delBtn').style.display =
+      'none';
+
+
+    /*
+     * 모달 열기
+     */
+
+    modal.classList.add('open');
+
+  }
+
+
+
+  /* =====================================================
+     수정 모달
+  ====================================================== */
+
+  function editItem(button) {
+
+
+    /*
+     * 클릭한 수정 버튼의 부모 <tr>
+     */
+
+    const row =
+      button.closest('tr');
+
+
+    /*
+     * 해당 행의 Thymeleaf data-* 값 가져오기
+     */
+
+    const id =
+      row.dataset.id;
+
+
+    const type =
+      row.dataset.type;
+
+
+    const title =
+      row.dataset.title;
+
+
+    const date =
+      row.dataset.date;
+
+
+    const content =
+      row.dataset.content;
+
+
+    const file =
+      row.dataset.file;
+
+
+
+    /*
+     * 모달 제목
+     */
+
+    document.getElementById('mTitle').textContent =
+      '글 수정';
+
+
+
+    /*
+     * 기존 데이터 입력
+     */
+
+    document.getElementById('f-id').value =
+      id || '';
+
+
+    document.getElementById('f-type').value =
+      type || 1;
+
+
+    document.getElementById('f-title').value =
+      title || '';
+
+
+    document.getElementById('f-date').value =
+      date || '';
+
+
+    document.getElementById('f-content').value =
+      content || '';
+
+
+
+  const currentFile =
+    document.getElementById('current-file');
+
+
+  if (file) {
+
+    currentFile.textContent =
+      '현재 첨부파일: ' + file;
+
+    currentFile.style.display =
+      'block';
+
+  } else {
+
+    currentFile.textContent =
+      '';
+
+    currentFile.style.display =
+      'none';
+
+  }
+  document.getElementById('f-file').value =
+    '';
+
+    /*
+     * 수정이므로 삭제 버튼 표시
+     */
+
+    document.getElementById('delBtn').style.display =
+      'inline-flex';
+
+
+
+    /*
+     * 모달 열기
+     */
+
+    modal.classList.add('open');
+
+  }
+
+
+
+  /* =====================================================
+     모달 닫기
+  ====================================================== */
+
+  function closeModal() {
+
+    modal.classList.remove('open');
+
+  }
+
+
+
+  /* =====================================================
+     저장
+  ====================================================== */
+
+  function save() {
+
+
+    const title =
+      document.getElementById('f-title').value.trim();
+
+
+    /*
+     * 제목 검사
+     */
+
+    if (!title) {
+
+      alert('제목을 입력하세요.');
+
+      return;
+
+    }
+
+
+    /*
+     * form submit
+     *
+     * id가 없으면 새 글
+     * id가 있으면 수정
+     */
+
+    form.submit();
+
+  }
+
+
+
+  /* =====================================================
+     현재 글 삭제
+  ====================================================== */
+
+  function removeItem() {
+
+
+    const id =
+      document.getElementById('f-id').value;
+
+
+    if (!id) {
+      return;
+    }
+
+
+    if (!confirm('이 글을 삭제할까요?')) {
+      return;
+    }
+
+
+
+    /*
+     * 삭제용 form을 동적으로 생성
+     */
+
+    const deleteForm =
+      document.createElement('form');
+
+
+    deleteForm.method =
+      'post';
+
+
+    deleteForm.action =
+      '/admin/notices/delete/' + id;
+
+
+    document.body.appendChild(deleteForm);
+
+
+    deleteForm.submit();
+
+  }
+
+
+
+  /* =====================================================
+     유형 / 제목 검색
+  ====================================================== */
+
+  function filterRows() {
+
+
+    const type =
+      filter.value;
+
+
+    const keyword =
+      search.value
+        .trim()
+        .toLowerCase();
+
+
+
+    const rows =
+      document.querySelectorAll(
+        '#tbl tbody tr[data-title]'
+      );
+
+
+
+    rows.forEach(row => {
+
+
+      const rowType =
+        row.dataset.type || '';
+
+
+      const rowTitle =
+        row.dataset.title || '';
+
+
+
+      const typeMatch =
+        type === 'all' ||
+        rowType === type;
+
+
+
+      const searchMatch =
+        !keyword ||
+        rowTitle.toLowerCase().includes(keyword);
+
+
+
+      row.style.display =
+        typeMatch && searchMatch
+          ? ''
+          : 'none';
+
+
+    });
+
+  }
+
+
+
+  filter.addEventListener(
+    'change',
+    filterRows
+  );
+
+
+  search.addEventListener(
+    'input',
+    filterRows
+  );
+
+
+
+  /* =====================================================
+     모달 바깥 클릭 → 닫기
+  ====================================================== */
+
+  modal.addEventListener(
+    'click',
+    function(e) {
+
+      if (e.target === modal) {
+
+        closeModal();
+
+      }
+
+    }
+  );
+
+
+
+  /* =====================================================
+     ESC → 모달 닫기
+  ====================================================== */
+
+ document.addEventListener(
+    'keydown',
+    function(e) {
+
+      if (e.key === 'Escape') {
+
+        closeModal();
+
+      }
+
+    }
+  );
+
+
+</script>
+
+
+</body>
+
+</html>

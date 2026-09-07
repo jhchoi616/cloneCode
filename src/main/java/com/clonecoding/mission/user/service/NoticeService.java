@@ -165,4 +165,8 @@ public class NoticeService {
     public long getDataCount() {
         return noticeRepository.countByType(2);
     }
+    // 공지사항 및 자료실 디테일 조회
+    public Post findById(Long id) {
+    return noticeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+}
 }

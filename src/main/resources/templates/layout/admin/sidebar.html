@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<aside
+    th:fragment="sidebar"
+    class="sidebar">
+
+    <!-- 관리자 로고 -->
+    <div class="side-brand">
+        <a th:href="@{/admin}">
+            <img
+                th:src="@{/assets/헤더 로고.png}"
+                alt="B.POINT"
+                style="height:22px;width:auto;object-fit:contain">
+        </a>
+    </div>
+
+
+    <!-- 관리자 메뉴 -->
+    <nav class="side-menu">
+
+        <!-- 대시보드 -->
+        <a th:href="@{/admin}" th:classappend="${currentUri == 'admin' ? ' active':''}">
+            <span class="ico">◆</span>
+            대시보드
+        </a>
+
+
+        <!-- 공지 · 자료실 -->
+        <a th:href="@{/admin/notices}" th:classappend="${currentUri == 'notice' ? ' active':''}">
+            <span class="ico">▤</span>
+            공지·자료실
+        </a>
+
+
+        <!-- 소식 관리 -->
+        <a th:href="@{/admin/news}" th:classappend="${currentUri == 'news' ? ' active':''}">
+            <span class="ico">▦</span>
+            소식 관리
+        </a>
+
+
+        <!-- 문의 관리 -->
+        <a th:href="@{/admin/inquiries}" th:classappend="${currentUri == 'inquiry' ? ' active':''}">
+            <span class="ico">✉</span>
+            문의 관리
+        </a>
+
+
+        <!-- 사이트 보기 -->
+        <a
+            th:href="@{/}"
+            target="_blank">
+
+            <span class="ico">↗</span>
+            사이트 보기
+
+        </a>
+
+    </nav>
+
+
+    <!-- 관리자 정보 / 로그아웃 -->
+    <div class="side-foot">
+
+        <div class="side-user">
+
+            <div class="av">
+                B
+            </div>
+
+            <div>
+                <div class="nm">
+                    B.POINT
+                </div>
+
+                <div class="role">
+                    관리자
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Spring Security 로그아웃 -->
+        <form
+            th:action="@{/admin/logout}"
+            method="post">
+
+            <button
+                type="submit"
+                class="logout">
+
+                로그아웃
+
+            </button>
+
+        </form>
+
+    </div>
+
+</aside>
+
+</html>

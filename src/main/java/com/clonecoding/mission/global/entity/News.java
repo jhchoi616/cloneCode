@@ -30,7 +30,7 @@ public class News {
     @Column(columnDefinition = "TEXT")
     private String content;
     // 첨부 이미지 주소
-    private String ImageUrl;
+    private String imageUrl;
     // 시작일
     private LocalDate startDate;
     // 마감일

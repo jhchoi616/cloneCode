@@ -1,5 +1,6 @@
 package com.clonecoding.mission.global.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -31,8 +32,10 @@ public class Post {
     private String fileContentType;
     private String fileDownloadUri;
     private String fileUploadDir;
+    private String fileExtension;
     @Column(columnDefinition = "TEXT")
     private String content;
+    private LocalDate date;
     private LocalDateTime createdAt;
     private String createdBy;
     private String createdByIp;
