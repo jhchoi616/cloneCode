@@ -7,12 +7,14 @@ import org.springframework.ui.Model;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.clonecoding.mission.user.repository.NewsRepository;
+
 
 @Controller
 @RequiredArgsConstructor
 public class ProgramController {
     // TODO NEWS 데이터 가져오기
-    // private final NewsRepository newsRepository;
+    private final NewsRepository newsRepository;
 
     @GetMapping("/programs")
     public String programPage(Model model) {
@@ -30,7 +32,7 @@ public class ProgramController {
     public String eventPage(Model model) {
         model.addAttribute("currentUri", "/program");
         // newsRepository
-        // model.addAttribute("newsList", newsRepository.find)
+        model.addAttribute("newsList", newsRepository.findFirst4ByIsViewOrderByIdDesc(true));
 
         return "user/programs/event";
     }

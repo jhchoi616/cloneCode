@@ -68,28 +68,28 @@
                 style="padding-right:24px"
                 onchange="this.form.submit()">
 
-          <option value="all"
-                  th:selected="${type == null or type == 'all'}">
+          <option value=""
+                  th:selected="${type == null}">
             전체 유형
           </option>
 
-          <option value="1"
-                  th:selected="${type == '협력'}">
+          <option value=1
+                  th:selected="${type == 1}">
             협력
           </option>
 
-          <option value="2"
-                  th:selected="${type == '단체 수업 요청'}">
+          <option value=2
+                  th:selected="${type == 2}">
             단체 수업 요청
           </option>
 
-          <option value="3"
-                  th:selected="${type == '질문'}">
+          <option value=3
+                  th:selected="${type == 3}">
             질문
           </option>
 
-          <option value="4"
-                  th:selected="${type == '기타'}">
+          <option value=4
+                  th:selected="${type == 4}">
             기타
           </option>
 

@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.clonecoding.mission.admin.service.AdminInquiryService;
@@ -15,7 +16,6 @@ import com.clonecoding.mission.global.entity.Contact;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller 
@@ -26,18 +26,26 @@ public class AdminInquiryController {
     private final AdminInquiryService adminInquiryService;
     
     @GetMapping
-    public String admin_inquiry(Model model) {
+    public String admin_inquiry(@RequestParam(required = false) Integer type,Model model) {
         model.addAttribute("currentUri","inquiry");
-        List<Contact> inquiries = adminInquiryService.findAllByOrderByCreatedAtDescIdDesc();
+        List<Contact> inquiries;
 
+    if (type == null ) {
+        inquiries = adminInquiryService.findAllByOrderByCreatedAtDescIdDesc();
+    } else {
+        inquiries = adminInquiryService.findByTypeOrderByCreatedAtDescIdDesc(type);
+    }
+        model.addAttribute("type", type);
         model.addAttribute("inquiries", inquiries);
         return "admin/inquiry";
     }
 
+ 
+
+
     @GetMapping("/api/{id}")
     @ResponseBody
     public Contact getInquiryDetail(@PathVariable Long id) {
-
         return adminInquiryService.findById(id);
     }
     

@@ -99,7 +99,7 @@
   >
     <span
         class="tag"
-        th:text="${news.category}"
+        th:text="${news.category == 1 ? 'CLASS' : news.category == 2 ? 'EVENT' : 'STORY'}"
     >
       EVENT
     </span>

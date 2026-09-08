@@ -33,13 +33,13 @@ public class NewsService {
     public long countByCategory(Integer category) {
         return newsRepository.countByCategory(category);
     }
-public News findPrevious(Long id) {
-    return newsRepository.findFirstByIdLessThanOrderByIdDesc(id)
-            .orElse(null);
-}
+    public News findPrevious(Long id) {
+        return newsRepository.findFirstByIdLessThanOrderByIdDesc(id)
+                .orElse(null);
+    }
 
-public News findNext(Long id) {
-    return newsRepository.findFirstByIdGreaterThanOrderByIdAsc(id)
-            .orElse(null);
-}
+    public News findNext(Long id) {
+        return newsRepository.findFirstByIdGreaterThanOrderByIdAsc(id)
+                .orElse(null);
+    }
 }

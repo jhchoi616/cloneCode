@@ -148,10 +148,10 @@
             th:onclick="|location.href='@{/admin/inquiries/{id}(id=${inquiry.id})}'|">
 
             <td>
-
+              
               <span
                 class="badge-tag pending"
-                th:text="${inquiry.type}">
+                th:text="${inquiry.type == 1 ? '협력':inquiry.type == 2 ? '단체 수업 요청':inquiry.type == 3 ? '질문':'기타'}">
                 문의
               </span>
 

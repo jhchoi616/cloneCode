@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.clonecoding.mission.admin.repository.AdminInquiryRepository;
 import com.clonecoding.mission.global.entity.Contact;
-import com.clonecoding.mission.global.entity.News;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +20,10 @@ public class AdminInquiryService {
     @Transactional (readOnly = true)
     public List<Contact> findAllByOrderByCreatedAtDescIdDesc(){
         return adminInquiryRepository.findAllByOrderByCreatedAtDescIdDesc();
+    }
+    
+    public List<Contact> findByTypeOrderByCreatedAtDescIdDesc(Integer type){
+        return adminInquiryRepository.findByTypeOrderByCreatedAtDescIdDesc(type);
     }
 
     @Transactional (readOnly = true)

@@ -8,4 +8,5 @@ import com.clonecoding.mission.global.entity.Contact;
 
 public interface AdminInquiryRepository extends JpaRepository<Contact, Long> {
     List<Contact> findAllByOrderByCreatedAtDescIdDesc();
+    List<Contact> findByTypeOrderByCreatedAtDescIdDesc(Integer type);
 }
