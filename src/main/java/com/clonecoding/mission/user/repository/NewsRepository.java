@@ -18,4 +18,5 @@ public interface NewsRepository extends JpaRepository<News, Long> {
     Optional<News> findFirstByIdGreaterThanOrderByIdAsc(Long id);
     List<News> findFirst3ByOrderByIdDesc();
     List<News> findFirst4ByIsViewOrderByIdDesc(Boolean isView);
+    List<News> findFirst5ByOrderByCreatedAtDesc();
 }

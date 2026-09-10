@@ -1,5 +1,7 @@
 package com.clonecoding.mission.user.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -48,6 +50,7 @@ public interface NoticeRepository extends JpaRepository<Post, Long> {
         Integer type,
         Pageable pageable
 );
+List<Post> findFirst5ByOrderByCreatedAtDesc();
 
 Page<Post> findByTitleContaining(
         String keyword,

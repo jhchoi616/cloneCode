@@ -22,12 +22,16 @@
 
 <main class="app">
 
-  <!-- 상단 -->
+  <!-- =========================
+       상단
+  ========================== -->
   <div class="topbar">
+
     <div>
       <h1>대시보드</h1>
       <div class="crumbs">관리자 / 대시보드</div>
     </div>
+
   </div>
 
 
@@ -40,48 +44,65 @@
 
       <!-- 공지·자료 -->
       <div class="stat">
-        <div class="lbl">공지·자료</div>
 
-        <div class="val"
-             th:text="${noticeCount != null ? noticeCount : 0}">
+        <div class="lbl">
+          공지·자료
+        </div>
+
+        <div
+          class="val"
+          th:text="${noticeCount != null ? noticeCount : 0}">
           0
         </div>
 
         <div class="delta">
           전체 등록 수
         </div>
+
       </div>
 
 
       <!-- 소식 -->
       <div class="stat">
-        <div class="lbl">소식</div>
 
-        <div class="val"
-             th:text="${newsCount != null ? newsCount : 0}">
+        <div class="lbl">
+          소식
+        </div>
+
+        <div
+          class="val"
+          th:text="${newsCount != null ? newsCount : 0}">
           0
         </div>
 
         <div class="delta">
           전체 게시글
         </div>
+
       </div>
 
 
       <!-- 문의 -->
       <div class="stat">
-        <div class="lbl">전체 문의</div>
+
+        <div class="lbl">
+          전체 문의
+        </div>
 
         <div class="val">
-          <span class="o"
-                th:text="${inquiryCount != null ? inquiryCount : 0}">
+
+          <span
+            class="o"
+            th:text="${inquiryCount != null ? inquiryCount : 0}">
             0
           </span>
+
         </div>
 
         <div class="delta">
           누적 접수 건수
         </div>
+
       </div>
 
     </div>
@@ -94,14 +115,18 @@
 
       <div class="panel-head">
 
-        <h2>최근 문의</h2>
+        <h2>
+          최근 문의
+        </h2>
 
         <div class="actions">
+
           <a
             class="btn btn-line btn-sm"
             th:href="@{/admin/inquiries}">
             전체 보기 →
           </a>
+
         </div>
 
       </div>
@@ -112,28 +137,50 @@
         <table class="dt">
 
           <thead>
+
           <tr>
-            <th style="width:120px">유형</th>
-            <th>이름</th>
-            <th>내용</th>
-            <th style="width:140px">접수일</th>
+
+            <th style="width:120px">
+              유형
+            </th>
+
+            <th>
+              이름
+            </th>
+
+            <th>
+              내용
+            </th>
+
+            <th style="width:140px">
+              접수일
+            </th>
+
             <th></th>
+
           </tr>
+
           </thead>
 
 
           <tbody>
 
-          <!-- 문의가 없는 경우 -->
+          <!-- =========================
+               문의가 없는 경우
+          ========================== -->
           <tr th:if="${#lists.isEmpty(recentInquiries)}">
 
             <td colspan="5">
 
               <div class="empty">
 
-                <div class="ico">✉</div>
+                <div class="ico">
+                  ✉
+                </div>
 
-                <p>접수된 문의가 없습니다.</p>
+                <p>
+                  접수된 문의가 없습니다.
+                </p>
 
               </div>
 
@@ -142,55 +189,91 @@
           </tr>
 
 
-          <!-- 문의 목록 -->
+          <!-- =========================
+               문의 목록
+          ========================== -->
           <tr
             th:each="inquiry : ${recentInquiries}"
-            th:onclick="|location.href='@{/admin/inquiries/{id}(id=${inquiry.id})}'|">
+            class="inquiry-row"
+            th:attr="
+              data-id=${inquiry.id},
+              data-type=${inquiry.type},
+              data-name=${inquiry.createdBy},
+              data-message=${inquiry.message},
+              data-created-at=${inquiry.createdAt}
+            "
+            onclick="openInquiryModal(this)">
 
+
+            <!-- 유형 -->
             <td>
-              
+
               <span
                 class="badge-tag pending"
-                th:text="${inquiry.type == 1 ? '협력':inquiry.type == 2 ? '단체 수업 요청':inquiry.type == 3 ? '질문':'기타'}">
+                th:text="
+                  ${inquiry.type == 1
+                    ? '협력'
+                    : inquiry.type == 2
+                      ? '단체 수업 요청'
+                      : inquiry.type == 3
+                        ? '질문'
+                        : '기타'}">
+
                 문의
+
               </span>
 
             </td>
 
 
+            <!-- 이름 -->
             <td
               style="font-weight:700"
               th:text="${inquiry.createdBy}">
+
               이름
+
             </td>
 
 
+            <!-- 내용 -->
             <td
-              style="color:var(--soft);
-                     max-width:380px;
-                     white-space:nowrap;
-                     overflow:hidden;
-                     text-overflow:ellipsis"
+              style="
+                color:var(--soft);
+                max-width:380px;
+                white-space:nowrap;
+                overflow:hidden;
+                text-overflow:ellipsis
+              "
               th:text="${inquiry.message}">
+
               문의 내용
+
             </td>
 
 
+            <!-- 접수일 -->
             <td
               style="color:var(--muted)"
               th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}">
+
               2026-01-01 00:00
+
             </td>
 
 
+            <!-- 보기 -->
             <td class="actions">
 
-              <a
+              <button
+                type="button"
                 class="btn btn-line btn-sm"
-                th:href="@{/admin/inquiries/{id}(id=${inquiry.id})}"
-                onclick="event.stopPropagation()">
+                th:attr="data-id=${inquiry.id}"
+                onclick="event.stopPropagation(); openInquiryModal(this.closest('tr'))">
+
                 보기 →
-              </a>
+
+              </button>
 
             </td>
 
@@ -209,9 +292,11 @@
          공지 / 소식
     ========================== -->
     <div
-      style="display:grid;
-             grid-template-columns:1fr 1fr;
-             gap:20px">
+      style="
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:20px
+      ">
 
 
       <!-- =========================
@@ -221,12 +306,16 @@
 
         <div class="panel-head">
 
-          <h2>최근 공지·자료</h2>
+          <h2>
+            최근 공지·자료
+          </h2>
 
           <a
             class="btn btn-line btn-sm"
             th:href="@{/admin/notices}">
+
             관리 →
+
           </a>
 
         </div>
@@ -239,9 +328,19 @@
             <thead>
 
             <tr>
-              <th style="width:80px">유형</th>
-              <th>제목</th>
-              <th style="width:120px">날짜</th>
+
+              <th style="width:80px">
+                유형
+              </th>
+
+              <th>
+                제목
+              </th>
+
+              <th style="width:120px">
+                날짜
+              </th>
+
             </tr>
 
             </thead>
@@ -255,7 +354,11 @@
               <td colspan="3">
 
                 <div class="empty">
-                  <p>등록된 공지가 없습니다.</p>
+
+                  <p>
+                    등록된 공지가 없습니다.
+                  </p>
+
                 </div>
 
               </td>
@@ -274,7 +377,9 @@
                   class="badge-tag"
                   th:classappend="${notice.type == 2} ? ' data' : ' notice'"
                   th:text="${notice.type == 2 ? '자료' : '공지'}">
+
                   공지
+
                 </span>
 
               </td>
@@ -283,14 +388,18 @@
               <td
                 style="font-weight:600"
                 th:text="${notice.title}">
+
                 공지 제목
+
               </td>
 
 
               <td
                 style="color:var(--muted)"
                 th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd')}">
+
                 2026-01-01
+
               </td>
 
             </tr>
@@ -311,12 +420,16 @@
 
         <div class="panel-head">
 
-          <h2>최근 소식</h2>
+          <h2>
+            최근 소식
+          </h2>
 
           <a
             class="btn btn-line btn-sm"
             th:href="@{/admin/news}">
+
             관리 →
+
           </a>
 
         </div>
@@ -329,9 +442,19 @@
             <thead>
 
             <tr>
-              <th style="width:80px">카테고리</th>
-              <th>제목</th>
-              <th style="width:120px">날짜</th>
+
+              <th style="width:80px">
+                카테고리
+              </th>
+
+              <th>
+                제목
+              </th>
+
+              <th style="width:120px">
+                날짜
+              </th>
+
             </tr>
 
             </thead>
@@ -345,7 +468,11 @@
               <td colspan="3">
 
                 <div class="empty">
-                  <p>등록된 소식이 없습니다.</p>
+
+                  <p>
+                    등록된 소식이 없습니다.
+                  </p>
+
                 </div>
 
               </td>
@@ -362,8 +489,15 @@
 
                 <span
                   class="badge-tag"
-                  th:text="${news.category == 1 ? 'CLASS': news.category == 2 ? 'EVENT': 'STORY'}">
+                  th:text="
+                    ${news.category == 1
+                      ? 'CLASS'
+                      : news.category == 2
+                        ? 'EVENT'
+                        : 'STORY'}">
+
                   CATEGORY
+
                 </span>
 
               </td>
@@ -372,14 +506,18 @@
               <td
                 style="font-weight:600"
                 th:text="${news.title}">
+
                 소식 제목
+
               </td>
 
 
               <td
                 style="color:var(--muted)"
                 th:text="${#temporals.format(news.createdAt, 'yyyy-MM-dd')}">
+
                 2026-01-01
+
               </td>
 
             </tr>
@@ -399,7 +537,759 @@
 </main>
 
 
+<!-- =========================================================
+     문의 상세 모달
+========================================================= -->
+<div
+  id="inquiryModal"
+  class="inquiry-modal-overlay"
+  onclick="closeInquiryModal(event)">
+
+
+  <div
+    class="inquiry-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="inquiryModalTitle"
+    onclick="event.stopPropagation()">
+
+
+    <!-- =========================
+         모달 헤더
+    ========================== -->
+    <div class="inquiry-modal-header">
+
+      <div>
+
+        <div class="inquiry-modal-label">
+          INQUIRY
+        </div>
+
+        <h2 id="inquiryModalTitle">
+          문의 상세
+        </h2>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="inquiry-modal-close"
+        onclick="closeInquiryModal()"
+        aria-label="닫기">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- =========================
+         모달 내용
+    ========================== -->
+    <div class="inquiry-modal-body">
+
+
+      <!-- 유형 -->
+      <div class="inquiry-detail-row">
+
+        <div class="inquiry-detail-label">
+          유형
+        </div>
+
+        <div>
+          <span
+            id="modalInquiryType"
+            class="badge-tag pending">
+            문의
+          </span>
+        </div>
+
+      </div>
+
+
+      <!-- 이름 -->
+      <div class="inquiry-detail-row">
+
+        <div class="inquiry-detail-label">
+          이름
+        </div>
+
+        <div
+          id="modalInquiryName"
+          class="inquiry-detail-value">
+        </div>
+
+      </div>
+
+
+      <!-- 접수일 -->
+      <div class="inquiry-detail-row">
+
+        <div class="inquiry-detail-label">
+          접수일
+        </div>
+
+        <div
+          id="modalInquiryDate"
+          class="inquiry-detail-value inquiry-date">
+        </div>
+
+      </div>
+
+
+      <!-- 문의 내용 -->
+      <div class="inquiry-message-section">
+
+        <div class="inquiry-detail-label">
+          문의 내용
+        </div>
+
+        <div
+          id="modalInquiryMessage"
+          class="inquiry-message-box">
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+    <!-- =========================
+         모달 하단
+    ========================== -->
+    <div class="inquiry-modal-footer">
+
+
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        onclick="closeInquiryModal()">
+
+        닫기
+
+      </button>
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
 <script th:src="@{/js/admin-common.js}"></script>
+
+
+<script>
+
+  /**
+   * 문의 상세 모달 열기
+   */
+  function openInquiryModal(row) {
+
+    if (!row) {
+      return;
+    }
+
+
+    const id = row.dataset.id;
+    const type = row.dataset.type;
+    const name = row.dataset.name;
+    const message = row.dataset.message;
+    const createdAt = row.dataset.createdAt;
+
+
+    /*
+     * 문의 유형
+     */
+    const typeElement =
+      document.getElementById('modalInquiryType');
+
+    typeElement.textContent =
+      getInquiryType(type);
+
+
+    /*
+     * 이름
+     */
+    document.getElementById(
+      'modalInquiryName'
+    ).textContent = name || '';
+
+
+    /*
+     * 접수일
+     */
+    document.getElementById(
+      'modalInquiryDate'
+    ).textContent = formatInquiryDate(createdAt);
+
+
+    /*
+     * 문의 내용
+     */
+    document.getElementById(
+      'modalInquiryMessage'
+    ).textContent = message || '문의 내용이 없습니다.';
+
+
+    /*
+     * 기존 상세 페이지 링크
+     *
+     * "문의 관리 →"를 눌렀을 때만
+     * 기존 상세 페이지로 이동
+     */
+    document.getElementById(
+      'modalInquiryDetail'
+    ).href = '/admin/inquiries/' + id;
+
+
+    /*
+     * 모달 열기
+     */
+    document
+      .getElementById('inquiryModal')
+      .classList.add('show');
+
+
+    /*
+     * 모달이 열려있는 동안
+     * 배경 페이지 스크롤 방지
+     */
+    document.body.style.overflow = 'hidden';
+
+  }
+
+
+  /**
+   * 문의 유형
+   */
+  function getInquiryType(type) {
+
+    switch (Number(type)) {
+
+      case 1:
+        return '협력';
+
+      case 2:
+        return '단체 수업 요청';
+
+      case 3:
+        return '질문';
+
+      case 4:
+        return '기타';
+
+      default:
+        return '문의';
+
+    }
+
+  }
+
+
+  /**
+   * 날짜 포맷
+   *
+   * createdAt이
+   * LocalDateTime의 문자열 형태로 들어오는 것을 기준으로 처리
+   */
+  function formatInquiryDate(dateString) {
+
+    if (!dateString) {
+      return '';
+    }
+
+
+    /*
+     * 예:
+     * 2026-09-10T10:17:53.973309
+     */
+    const date = new Date(dateString);
+
+
+    /*
+     * 브라우저에서 정상적으로 Date 변환이 되지 않는 경우
+     */
+    if (isNaN(date.getTime())) {
+
+      return dateString
+        .replace('T', ' ')
+        .substring(0, 16);
+
+    }
+
+
+    const year =
+      date.getFullYear();
+
+    const month =
+      String(date.getMonth() + 1)
+        .padStart(2, '0');
+
+    const day =
+      String(date.getDate())
+        .padStart(2, '0');
+
+    const hour =
+      String(date.getHours())
+        .padStart(2, '0');
+
+    const minute =
+      String(date.getMinutes())
+        .padStart(2, '0');
+
+
+    return `${year}-${month}-${day} ${hour}:${minute}`;
+
+  }
+
+
+  /**
+   * 문의 상세 모달 닫기
+   */
+  function closeInquiryModal(event) {
+
+    /*
+     * 오버레이 자체를 클릭한 경우만
+     * 배경 클릭으로 판단
+     */
+    if (
+      event &&
+      event.target.id !== 'inquiryModal'
+    ) {
+      return;
+    }
+
+
+    document
+      .getElementById('inquiryModal')
+      .classList.remove('show');
+
+
+    /*
+     * 페이지 스크롤 복구
+     */
+    document.body.style.overflow = '';
+
+  }
+
+
+  /**
+   * ESC 키로 모달 닫기
+   */
+  document.addEventListener(
+    'keydown',
+    function(event) {
+
+      if (event.key === 'Escape') {
+
+        closeInquiryModal();
+
+      }
+
+    }
+  );
+
+</script>
+
+
+<style>
+
+  /* =========================================================
+     문의 모달 오버레이
+  ========================================================= */
+
+  .inquiry-modal-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 24px;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    display: none;
+
+    pointer-events: none;
+
+    transition:
+      opacity 0.2s ease,
+      visibility 0.2s ease;
+
+  }
+
+
+  .inquiry-modal-overlay.show {
+    display: flex;
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+
+  }
+
+
+  /* =========================================================
+     문의 모달
+  ========================================================= */
+
+  .inquiry-modal {
+
+    width: 100%;
+
+    max-width: 620px;
+
+    max-height: calc(100vh - 48px);
+
+    display: flex;
+
+    flex-direction: column;
+
+    background: #fff;
+
+    border-radius: 18px;
+
+    box-shadow:
+      0 25px 70px rgba(0, 0, 0, 0.25);
+
+    overflow: hidden;
+
+    transform: translateY(12px) scale(0.98);
+
+    transition:
+      transform 0.2s ease;
+
+  }
+
+
+  .inquiry-modal-overlay.show .inquiry-modal {
+
+    transform:
+      translateY(0)
+      scale(1);
+
+  }
+
+
+  /* =========================================================
+     모달 헤더
+  ========================================================= */
+
+  .inquiry-modal-header {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    padding: 28px 30px 22px;
+
+    border-bottom: 1px solid #eee;
+
+  }
+
+
+  .inquiry-modal-label {
+
+    margin-bottom: 5px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.12em;
+
+    color: #999;
+
+  }
+
+
+  .inquiry-modal-header h2 {
+
+    margin: 0;
+
+    font-size: 22px;
+
+    font-weight: 800;
+
+    color: #111;
+
+  }
+
+
+  .inquiry-modal-close {
+
+    width: 36px;
+
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    background: #f5f5f5;
+
+    color: #555;
+
+    font-size: 25px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+      background 0.15s ease,
+      color 0.15s ease;
+
+  }
+
+
+  .inquiry-modal-close:hover {
+
+    background: #111;
+
+    color: #fff;
+
+  }
+
+
+  /* =========================================================
+     모달 본문
+  ========================================================= */
+
+  .inquiry-modal-body {
+
+    padding: 26px 30px;
+
+    overflow-y: auto;
+
+  }
+
+
+  .inquiry-detail-row {
+
+    display: grid;
+
+    grid-template-columns: 90px 1fr;
+
+    align-items: center;
+
+    min-height: 48px;
+
+    border-bottom: 1px solid #f1f1f1;
+
+  }
+
+
+  .inquiry-detail-label {
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    color: #888;
+
+  }
+
+
+  .inquiry-detail-value {
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    color: #222;
+
+  }
+
+
+  .inquiry-date {
+
+    color: #777;
+
+    font-weight: 500;
+
+  }
+
+
+  /* =========================================================
+     문의 내용
+  ========================================================= */
+
+  .inquiry-message-section {
+
+    margin-top: 24px;
+
+  }
+
+
+  .inquiry-message-section
+  .inquiry-detail-label {
+
+    margin-bottom: 10px;
+
+  }
+
+
+  .inquiry-message-box {
+
+    min-height: 150px;
+
+    max-height: 320px;
+
+    padding: 18px;
+
+    border: 1px solid #eee;
+
+    border-radius: 12px;
+
+    background: #fafafa;
+
+    color: #333;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+
+    overflow-y: auto;
+
+  }
+
+
+  /* =========================================================
+     모달 하단
+  ========================================================= */
+
+  .inquiry-modal-footer {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    padding: 18px 30px 24px;
+
+    border-top: 1px solid #eee;
+
+    background: #fff;
+
+  }
+
+
+  /* =========================================================
+     문의 행 UX
+  ========================================================= */
+
+  .inquiry-row {
+
+    cursor: pointer;
+
+  }
+
+
+  .inquiry-row:hover td {
+
+    background: #fafafa;
+
+  }
+
+
+  .inquiry-row td {
+
+    transition:
+      background 0.15s ease;
+
+  }
+
+
+  /* =========================================================
+     모바일
+  ========================================================= */
+
+  @media (max-width: 700px) {
+
+    .inquiry-modal-overlay {
+
+      padding: 14px;
+
+    }
+
+
+    .inquiry-modal {
+
+      max-height: calc(100vh - 28px);
+
+      border-radius: 14px;
+
+    }
+
+
+    .inquiry-modal-header {
+
+      padding: 22px 20px 18px;
+
+    }
+
+
+    .inquiry-modal-body {
+
+      padding: 20px;
+
+    }
+
+
+    .inquiry-modal-footer {
+
+      padding: 16px 20px 20px;
+
+    }
+
+
+    .inquiry-detail-row {
+
+      grid-template-columns: 75px 1fr;
+
+    }
+
+
+    .inquiry-message-box {
+
+      min-height: 130px;
+
+    }
+
+  }
+
+</style>
 
 
 </body>

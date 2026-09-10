@@ -58,11 +58,11 @@ public class AdminController {
         model.addAttribute("newsCount",newsRepository.count());
         model.addAttribute("noticeCount",noticeRepository.count());
         // recentInquiries 문의
-        model.addAttribute("recentInquiries",contactRepository.findAll());
+        model.addAttribute("recentInquiries",contactRepository.findFirst5ByOrderByCreatedAtDesc());
         // recentNotices 공지
-        model.addAttribute("recentNotices",noticeRepository.findAll());
+        model.addAttribute("recentNotices",noticeRepository.findFirst5ByOrderByCreatedAtDesc());
         // recentNews 소식
-        model.addAttribute("recentNews",newsRepository.findAll());
+        model.addAttribute("recentNews",newsRepository.findFirst5ByOrderByCreatedAtDesc());
         return "admin/dashboard";
     }
     

@@ -45,8 +45,10 @@
     <form
       th:action="@{/admin/login}"
       method="post">
-
-      <div class="fld" hidden>
+    <input type="hidden"
+           th:name="${_csrf.parameterName}"
+           th:value="${_csrf.token}">
+      <div class="fld">
 
         <label for="userId" >관리자 ID</label>
 
@@ -83,7 +85,7 @@
 
     </form>
     <div class="login-hint">
-      데모 비밀번호: <code>bpoint2026</code>
+      비밀번호: <code>bpoint2026</code>
     </div>
   </div>
 
