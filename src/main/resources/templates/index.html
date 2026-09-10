@@ -658,9 +658,11 @@
   </div>
 
   <form id="contactForm"
-        th:action="@{/contact}"
+        action="/contact"
         method="post">
-
+    <input type="hidden"
+           th:name="${_csrf.parameterName}"
+           th:value="${_csrf.token}">
 <div class="field-row">
 
   <div class="field">
