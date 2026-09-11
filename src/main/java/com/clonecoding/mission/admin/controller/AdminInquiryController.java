@@ -26,7 +26,7 @@ public class AdminInquiryController {
     private final AdminInquiryService adminInquiryService;
     
     @GetMapping
-    public String admin_inquiry(@RequestParam(required = false) Integer type,Model model) {
+    public String admin_inquiry(@RequestParam(name="type", required = false) Integer type,Model model) {
         model.addAttribute("currentUri","inquiry");
         List<Contact> inquiries;
 
@@ -45,12 +45,12 @@ public class AdminInquiryController {
 
     @GetMapping("/api/{id}")
     @ResponseBody
-    public Contact getInquiryDetail(@PathVariable Long id) {
+    public Contact getInquiryDetail(@PathVariable("id") Long id) {
         return adminInquiryService.findById(id);
     }
     
     @PostMapping("/delete/{id}")
-    public String postMethodName(@PathVariable Long id) throws IOException  {
+    public String postMethodName(@PathVariable("id") Long id) throws IOException  {
         //TODO: process POST request
         adminInquiryService.delete(id);
         return "redirect:/admin/inquiries";

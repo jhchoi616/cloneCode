@@ -37,7 +37,7 @@ public class NoticeController {
     private final NoticeService noticeService;
 
     @GetMapping
-    public String noticePage(@RequestParam(required = false) Integer type, @RequestParam(required = false, defaultValue = "") String keyword, @PageableDefault( size = 9, sort = "createdAt", direction = Sort.Direction.DESC ) Pageable pageable, Model model ) {
+    public String noticePage(@RequestParam(name="type", required = false) Integer type, @RequestParam(required = false, defaultValue = "", name="keyword") String keyword, @PageableDefault( size = 9, sort = "createdAt", direction = Sort.Direction.DESC ) Pageable pageable, Model model ) {
 
         Page<Post> postPage = noticeService.getPosts( type,keyword,pageable); 
         Post latestNotice = noticeService.getLatestNotice(); 
@@ -73,7 +73,7 @@ public class NoticeController {
     }
 
     @GetMapping("/{id}")
-    public String getNotices( @PathVariable Long id,Model model) {
+    public String getNotices( @PathVariable("id") Long id,Model model) {
         Post post = noticeService.findById(id);
         model.addAttribute("post", post);
         model.addAttribute("currentUri", "/notice");
@@ -83,7 +83,7 @@ public class NoticeController {
 
     @GetMapping("/file/{id}")
     public ResponseEntity<Resource> downloadFile(
-            @PathVariable Long id
+            @PathVariable("id") Long id
     ) throws IOException {
 
         Post post = noticeService.findById(id);

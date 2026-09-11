@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class NewsController {
     private final NewsService newsService;
     @GetMapping
-    public String getMethodName(@RequestParam(required = false) Integer category,Pageable pageable,Model model) {
+    public String getMethodName(@RequestParam(name="category", required = false) Integer category,Pageable pageable,Model model) {
         model.addAttribute("currentUri", "/news");
         Page<News> page = newsService.findNews(category, pageable);
         // System.out.println("지금 선택한 카테고리는?");
@@ -42,7 +42,7 @@ public class NewsController {
     
     @GetMapping("/{id}")
     public String detail(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             Model model) {
 
         News news = newsService.findById(id);

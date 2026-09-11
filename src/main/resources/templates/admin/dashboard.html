@@ -229,10 +229,8 @@
             <!-- 이름 -->
             <td
               style="font-weight:700"
-              th:text="${inquiry.createdBy}">
-
+              th:text="${inquiry.createdBy.length()>10 ? inquiry.createdBy.substring(0,10) + '...' : inquiry.createdBy}">
               이름
-
             </td>
 
 
@@ -387,7 +385,7 @@
 
               <td
                 style="font-weight:600"
-                th:text="${notice.title}">
+                th:text="${notice.title.length() > 10 ? notice.title.substring(0, 10) + '...' : notice.title}">
 
                 공지 제목
 
@@ -505,7 +503,7 @@
 
               <td
                 style="font-weight:600"
-                th:text="${news.title}">
+                th:text="${news.title.length() > 10 ? news.title.substring(0, 10) + '...' : news.title}">
 
                 소식 제목
 
@@ -735,18 +733,6 @@
     document.getElementById(
       'modalInquiryMessage'
     ).textContent = message || '문의 내용이 없습니다.';
-
-
-    /*
-     * 기존 상세 페이지 링크
-     *
-     * "문의 관리 →"를 눌렀을 때만
-     * 기존 상세 페이지로 이동
-     */
-    document.getElementById(
-      'modalInquiryDetail'
-    ).href = '/admin/inquiries/' + id;
-
 
     /*
      * 모달 열기

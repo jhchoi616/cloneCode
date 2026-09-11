@@ -43,7 +43,7 @@ public class AdminNewsController {
         
         @GetMapping("/news/{id}")
         @ResponseBody
-        public News getNews(@PathVariable Long id) {
+        public News getNews(@PathVariable("id") Long id) {
 
         return adminNewsService.findById(id);
         }
@@ -51,7 +51,7 @@ public class AdminNewsController {
         @PutMapping("/news/{id}")
         @ResponseBody
         public News updateNews(
-                @PathVariable Long id,
+                @PathVariable("id") Long id,
                 @RequestBody News news
         ) {
 
@@ -60,7 +60,7 @@ public class AdminNewsController {
 
         @DeleteMapping("/news/{id}")
         @ResponseBody
-        public void deleteNews(@PathVariable Long id) {
+        public void deleteNews(@PathVariable("id") Long id) {
 
         adminNewsService.delete(id);
         }

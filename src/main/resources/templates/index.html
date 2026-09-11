@@ -6,7 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <title>B.POINT — Move More, Move Live</title>
-
+<meta name="_csrf" th:content="${_csrf.token}">
+<meta name="_csrf_header" th:content="${_csrf.headerName}">
 <meta name="description"
       content="B.POINT 농구교실 — 결과 너머의 성장, 무의식 속의 더 선명한 삶." />
 
@@ -794,7 +795,9 @@
 <script>
   const contactForm = document.getElementById('contactForm');
   const hiddenMsg = document.getElementById('hidden-msg');
-
+  const token = document.querySelector('meta[name="_csrf"]').content;
+  const header = document.querySelector('meta[name="_csrf_header"]').content;
+  
   contactForm.addEventListener('submit', async function (event) {
     event.preventDefault();
 
@@ -803,6 +806,7 @@
     try {
       const response = await fetch(form.action, {
         method: 'POST',
+        headers:{[header]:token},
         body: new FormData(form)
       });
 

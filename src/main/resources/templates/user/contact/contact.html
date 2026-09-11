@@ -9,7 +9,8 @@
     <title>문의하기 — B.POINT</title>
     <meta name="description"
           content="B.POINT 문의 — 협력 제안, 단체 수업 요청, 클래스 문의.">
-
+<meta name="_csrf" th:content="${_csrf.token}">
+<meta name="_csrf_header" th:content="${_csrf.headerName}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -465,7 +466,8 @@
 <script>
     const contactForm = document.getElementById('contactForm');
     const hiddenMsg = document.querySelector("#hidden-msg");
-
+  const token = document.querySelector('meta[name="_csrf"]').content;
+  const header = document.querySelector('meta[name="_csrf_header"]').content;
     document.querySelectorAll('.faq-item').forEach(item => {
         item.addEventListener('click', () => {
             item.classList.toggle('open');
@@ -481,6 +483,7 @@
             try {
                 const response = await fetch(form.action, {
                     method: 'POST',
+                    headers:{[header]: token},
                     body: new FormData(form)
                 });
                 // console.log(response)

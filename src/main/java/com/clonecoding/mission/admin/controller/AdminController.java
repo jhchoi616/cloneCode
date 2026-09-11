@@ -85,7 +85,7 @@ public class AdminController {
 
     // 공지 저장 [ 새글, 수정 ]
     @PostMapping("/notices/save")
-    public String saveNotice( @ModelAttribute Post post, @RequestParam( value = "uploadFile", required = false ) MultipartFile uploadFile ) throws IOException {
+    public String saveNotice( @ModelAttribute Post post, @RequestParam( name="uploadFile", value = "uploadFile", required = false ) MultipartFile uploadFile ) throws IOException {
         /*
         * id가 없으면 새 글
         */
@@ -108,7 +108,7 @@ public class AdminController {
 
     // 공지 삭제
     @PostMapping("/notices/delete/{id}")
-    public String deleteNotice( @PathVariable Long id ) throws IOException {
+    public String deleteNotice( @PathVariable("id") Long id ) throws IOException {
     postService.delete(id);
     return "redirect:/admin/notices";
     }
@@ -119,7 +119,7 @@ public class AdminController {
     // 파일 다운로드
     @GetMapping("/notices/file/{id}")
     public ResponseEntity<Resource> downloadFile(
-            @PathVariable Long id
+            @PathVariable("id") Long id
     ) throws IOException {
 
         Post post =
