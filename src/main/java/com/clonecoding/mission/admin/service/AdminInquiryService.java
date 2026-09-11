@@ -2,6 +2,8 @@ package com.clonecoding.mission.admin.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,4 +55,25 @@ public class AdminInquiryService {
 
     }
 
+    @Transactional(readOnly = true)
+        public Page<Contact> findByTypeOrderByCreatedAtDescIdDesc(
+                Integer type,
+                Pageable pageable
+        ) {
+        return adminInquiryRepository
+                .findByTypeOrderByCreatedAtDescIdDesc(
+                        type,
+                        pageable
+                );
+        }
+
+
+        @Transactional(readOnly = true)
+        public Page<Contact> findAllByOrderByCreatedAtDescIdDesc(
+                Pageable pageable
+        ) {
+        return adminInquiryRepository
+                .findAllByOrderByCreatedAtDescIdDesc(pageable);
+        }
+        
 }

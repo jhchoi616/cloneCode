@@ -322,7 +322,6 @@
         공지 · 자료실
 
     </div>
-
     <span class="eyebrow">
         NOTICE &amp; RESOURCES
     </span>
@@ -519,8 +518,8 @@
                             #strings.toLowerCase(latestNotice.title),
                             #strings.toLowerCase(keyword)
                         ))}"
-
-                th:onclick="|location.href='@{/notice/{id}(id=${latestNotice.id})}'|">
+                th:data-href="@{/notice/{id}(id=${latestNotice.id})} + ${listUri}"
+                onclick="location.href=this.dataset.href">
 
 
             <!-- 최신 전체 글이면 NEW -->
@@ -600,8 +599,8 @@
         <div
                 class="notice-item"
                 th:each="post : ${posts}"
-
-                th:onclick="|location.href='@{/notice/{id}(id=${post.id})}'|">
+                th:data-href="@{/notice/{id}(id=${post.id})} + ${listUri}"
+                onclick="location.href=this.dataset.href">
 
 
             <!-- ==================================
@@ -692,10 +691,9 @@
                                 and !#strings.isEmpty(post.fileName)}">
 
                     ·
-
                     <span
                             th:text="${post.fileSize != null
-                                ? post.fileSize
+                                ? post.formattedFileSize
                                 : ''}">
                     </span>
 

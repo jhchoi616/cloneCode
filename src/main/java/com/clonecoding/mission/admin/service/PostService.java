@@ -8,6 +8,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,10 +37,39 @@ public class PostService {
     /*
      * 공지/자료 전체 조회
      */
-    @Transactional(readOnly = true)
-    public java.util.List<Post> findAll() {
-        return postRepository.findAllByOrderByCreatedAtDescTypeDesc();
+public Page<Post> findAll(
+        Integer type,
+        String keyword,
+        Pageable pageable
+) {
+    if (type != null && !keyword.isBlank()) {
+        return postRepository
+                .findByTypeAndTitleContainingIgnoreCaseOrderByCreatedAtDescTypeDesc(
+                        type,
+                        keyword,
+                        pageable
+                );
     }
+
+    if (type != null) {
+        return postRepository
+                .findByTypeOrderByCreatedAtDescTypeDesc(
+                        type,
+                        pageable
+                );
+    }
+
+    if (!keyword.isBlank()) {
+        return postRepository
+                .findByTitleContainingIgnoreCaseOrderByCreatedAtDescTypeDesc(
+                        keyword,
+                        pageable
+                );
+    }
+
+    return postRepository
+            .findAllByOrderByCreatedAtDescTypeDesc(pageable);
+}
 
 
     /*

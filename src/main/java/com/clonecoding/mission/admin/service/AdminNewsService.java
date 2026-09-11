@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +27,37 @@ private final AdminNewsRepository newsRepository;
  * ============================================================
  */
 @Transactional(readOnly = true)
-public List<News> findAll() {
+public Page<News> findAll(
+        Integer category,
+        String keyword,
+        Pageable pageable
+) {
+    if (category != null && !keyword.isBlank()) {
+        return newsRepository
+                .findByCategoryAndTitleContainingIgnoreCaseOrderByCreatedAtDesc(
+                        category,
+                        keyword,
+                        pageable
+                );
+    }
 
-    return newsRepository.findAllByOrderByCreatedAtDescIdDesc();
+    if (category != null) {
+        return newsRepository
+                .findByCategoryOrderByCreatedAtDesc(
+                        category,
+                        pageable
+                );
+    }
 
+    if (!keyword.isBlank()) {
+        return newsRepository
+                .findByTitleContainingIgnoreCaseOrderByCreatedAtDesc(
+                        keyword,
+                        pageable
+                );
+    }
+
+    return newsRepository.findAllByOrderByCreatedAtDesc(pageable);
 }
 
 

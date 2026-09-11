@@ -534,13 +534,17 @@
 
       <!-- DB에 공지가 있을 경우 -->
       <article class="news-card reveal"
-               th:each="item : ${news}">
+               th:each="item : ${news}"
+               th:data-url="@{/news/{id}(id=${item.id})}"
+               onclick="location.href=this.dataset.url"
+               >
 
         <div class="news-thumb t1">
 
           <img th:src="${item.imageUrl != null ? item.imageUrl : '/assets/헤더 로고.png'}"
                alt=""
-               class="news-mark" />
+               class="news-mark"
+               onerror="this.onerror=null; this.src='/assets/헤더 로고.png';"  />
 
         </div>
 

@@ -3,26 +3,26 @@
 
 <head>
 
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
 
   <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+  >
 
   <title>공지·자료실 관리 — B.POINT Admin</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
 
   <link
-    href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&family=Archivo+Black&display=swap"
-    rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&family=Archivo+Black&display=swap"
+      rel="stylesheet"
   >
 
   <link
-    rel="stylesheet"
-    th:href="@{/css/admin-styles.css}"
-  />
+      rel="stylesheet"
+      th:href="@{/css/admin-styles.css}"
+  >
 
 </head>
 
@@ -56,11 +56,11 @@
 
     <div class="right">
 
-      <!-- 새 글 작성 : 모달 오픈 -->
+      <!-- 새 글 작성 -->
       <button
-        type="button"
-        class="btn btn-primary"
-        onclick="openModal()">
+          type="button"
+          class="btn btn-primary"
+          onclick="openModal()">
 
         + 새 글 작성
 
@@ -94,8 +94,8 @@
           전체 글
 
           <span
-            style="color:var(--muted);font-weight:600;margin-left:4px"
-            th:text="'(' + ${#lists.size(notices)} + '건)'">
+              style="color:var(--muted);font-weight:600;margin-left:4px"
+              th:text="'(' + ${notices.totalElements} + '건)'">
 
             (0건)
 
@@ -105,25 +105,38 @@
 
 
 
-        <div class="actions">
+        <!-- =========================
+             서버 검색
+        ========================== -->
+
+        <form
+            method="get"
+            th:action="@{/admin/notices}"
+            class="actions">
 
 
           <!-- 유형 필터 -->
 
           <select
-            id="filter"
-            class="btn btn-line btn-sm"
-            style="padding-right:24px">
+              name="type"
+              class="btn btn-line btn-sm"
+              style="padding-right:24px">
 
-            <option value="all">
+            <option
+                value=""
+                th:selected="${type == null}">
               전체 유형
             </option>
 
-            <option value="1">
+            <option
+                value="1"
+                th:selected="${type != null and type == 1}">
               공지
             </option>
 
-            <option value="2">
+            <option
+                value="2"
+                th:selected="${type != null and type == 2}">
               자료
             </option>
 
@@ -134,15 +147,25 @@
           <!-- 제목 검색 -->
 
           <input
-            type="text"
-            id="search"
-            class="btn btn-line btn-sm"
-            placeholder="제목 검색"
-            style="font-weight:500;min-width:200px"
-          />
+              type="text"
+              name="keyword"
+              class="btn btn-line btn-sm"
+              placeholder="제목 검색"
+              style="font-weight:500;min-width:200px"
+              th:value="${keyword}"
+          >
 
 
-        </div>
+          <button
+              type="submit"
+              class="btn btn-line btn-sm">
+
+            검색
+
+          </button>
+
+
+        </form>
 
 
       </div>
@@ -157,8 +180,8 @@
 
 
         <table
-          class="dt"
-          id="tbl">
+            class="dt"
+            id="tbl">
 
 
           <thead>
@@ -194,7 +217,7 @@
           ========================== -->
 
           <tr
-            th:if="${#lists.isEmpty(notices)}">
+              th:if="${notices.empty}">
 
             <td colspan="4">
 
@@ -212,12 +235,12 @@
                 </p>
 
 
-                <!-- 새 글 작성 : 모달 오픈 -->
+                <!-- 새 글 작성 -->
 
                 <button
-                  type="button"
-                  class="btn btn-primary btn-sm"
-                  onclick="openModal()">
+                    type="button"
+                    class="btn btn-primary btn-sm"
+                    onclick="openModal()">
 
                   + 새 글 작성
 
@@ -238,16 +261,14 @@
           ========================== -->
 
           <tr
-            th:each="notice : ${notices}"
+              th:each="notice : ${notices.content}"
 
-            th:data-id="${notice.id}"
-            th:data-type="${notice.type}"
-            th:data-title="${notice.title}"
-
-            th:data-date="${notice.date}"
-
-            th:data-content="${notice.content}"
-            th:data-file="${notice.fileName}"
+              th:data-id="${notice.id}"
+              th:data-type="${notice.type}"
+              th:data-title="${notice.title}"
+              th:data-date="${notice.date}"
+              th:data-content="${notice.content}"
+              th:data-file="${notice.fileName}"
           >
 
 
@@ -256,11 +277,15 @@
             <td>
 
               <span
-                class="badge-tag"
+                  class="badge-tag"
 
-                th:classappend="${notice.type == 2} ? 'data' : 'notice'"
+                  th:classappend="${notice.type == 2}
+                    ? 'data'
+                    : 'notice'"
 
-                th:text="${notice.type == 2} ? '자료실' : '공지사항'">
+                  th:text="${notice.type == 2}
+                    ? '자료실'
+                    : '공지사항'">
 
                 공지사항
 
@@ -273,10 +298,10 @@
             <!-- 제목 -->
 
             <td
-              style="font-weight:600">
+                style="font-weight:600">
 
               <span
-                th:text="${notice.title}">
+                  th:text="${notice.title}">
 
                 제목
 
@@ -289,11 +314,13 @@
             <!-- 날짜 -->
 
             <td
-              style="color:var(--muted)"
+                style="color:var(--muted)"
 
-              th:text="${notice.date != null ? #temporals.format(notice.date, 'yyyy-MM-dd') : ''}">
+                th:text="${notice.date != null
+                    ? #temporals.format(notice.date, 'yyyy-MM-dd')
+                    : ''}">
 
-              2026-01-01
+                2026-01-01
 
             </td>
 
@@ -307,9 +334,9 @@
               <!-- 수정 -->
 
               <button
-                type="button"
-                class="btn btn-line btn-sm"
-                onclick="editItem(this)">
+                  type="button"
+                  class="btn btn-line btn-sm"
+                  onclick="editItem(this)">
 
                 수정
 
@@ -320,17 +347,17 @@
               <!-- 삭제 -->
 
               <form
-                th:action="@{/admin/notices/delete/{id}(id=${notice.id})}"
-                method="post"
+                  th:action="@{/admin/notices/delete/{id}(id=${notice.id})}"
+                  method="post"
 
-                style="display:inline"
+                  style="display:inline"
 
-                onsubmit="return confirm('이 글을 삭제할까요?');"
+                  onsubmit="return confirm('이 글을 삭제할까요?');"
               >
 
                 <button
-                  type="submit"
-                  class="btn btn-danger btn-sm">
+                    type="submit"
+                    class="btn btn-danger btn-sm">
 
                   삭제
 
@@ -351,6 +378,98 @@
         </table>
 
 
+
+        <!-- ================================================= -->
+        <!-- 페이지네이션
+        ================================================== -->
+
+        <div
+            th:if="${notices.totalPages > 1}"
+            style="
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              gap:6px;
+              margin:20px;
+              padding:10px;
+              border-top:1.5px solid #aaa;
+              flex-wrap:wrap;
+            ">
+
+
+          <!-- 이전 페이지 -->
+
+          <a
+              th:if="${notices.hasPrevious()}"
+
+              class="btn btn-line btn-sm"
+
+              th:href="@{/admin/notices(
+                  page=${notices.number - 1},
+                  size=${notices.size},
+                  type=${type},
+                  keyword=${keyword}
+              )}">
+
+            이전
+
+          </a>
+
+
+
+          <!-- 페이지 번호 -->
+
+          <th:block
+              th:each="pageNum : ${#numbers.sequence(0, notices.totalPages - 1)}">
+
+
+            <a
+                class="btn btn-sm"
+
+                th:classappend="${pageNum == notices.number}
+                    ? 'btn-primary'
+                    : 'btn-line'"
+
+                th:href="@{/admin/notices(
+                    page=${pageNum},
+                    size=${notices.size},
+                    type=${type},
+                    keyword=${keyword}
+                )}"
+
+                th:text="${pageNum + 1}">
+
+              1
+
+            </a>
+
+
+          </th:block>
+
+
+
+          <!-- 다음 페이지 -->
+
+          <a
+              th:if="${notices.hasNext()}"
+
+              class="btn btn-line btn-sm"
+
+              th:href="@{/admin/notices(
+                  page=${notices.number + 1},
+                  size=${notices.size},
+                  type=${type},
+                  keyword=${keyword}
+              )}">
+
+            다음
+
+          </a>
+
+
+        </div>
+
+
       </div>
 
 
@@ -369,8 +488,8 @@
 ====================================================== -->
 
 <div
-  class="modal-back"
-  id="modal">
+    class="modal-back"
+    id="modal">
 
 
   <div class="modal">
@@ -389,9 +508,9 @@
 
 
       <button
-        type="button"
-        class="close"
-        onclick="closeModal()">
+          type="button"
+          class="close"
+          onclick="closeModal()">
 
         ✕
 
@@ -409,32 +528,20 @@
     <div class="modal-body">
 
 
-      <!--
-
-        저장 요청
-
-        새 글:
-        POST /admin/notices/save
-
-        수정:
-        id가 hidden input에 들어감
-
-      -->
-
       <form
-        id="form"
-        th:action="@{/admin/notices/save}"
-        method="post"
-        enctype="multipart/form-data">
+          id="form"
+          th:action="@{/admin/notices/save}"
+          method="post"
+          enctype="multipart/form-data">
 
 
         <!-- 수정할 때 사용할 ID -->
 
         <input
-          type="hidden"
-          id="f-id"
-          name="id"
-        />
+            type="hidden"
+            id="f-id"
+            name="id"
+        >
 
 
 
@@ -448,12 +555,17 @@
 
 
           <select
-            id="f-type"
-            name="type"
-            required>
+              id="f-type"
+              name="type"
+              required>
 
-            <option value="1">공지사항</option>
-        <option value="2">자료실</option>
+            <option value="1">
+              공지사항
+            </option>
+
+            <option value="2">
+              자료실
+            </option>
 
           </select>
 
@@ -471,13 +583,13 @@
 
 
           <input
-            type="text"
-            id="f-title"
-            name="title"
-            maxlength="20"
-            required
-            placeholder="제목을 입력하세요"
-          />
+              type="text"
+              id="f-title"
+              name="title"
+              maxlength="20"
+              required
+              placeholder="제목을 입력하세요"
+          >
 
         </div>
 
@@ -493,10 +605,10 @@
 
 
           <input
-            type="date"
-            id="f-date"
-            name="date"
-          />
+              type="date"
+              id="f-date"
+              name="date"
+          >
 
         </div>
 
@@ -512,10 +624,10 @@
 
 
           <textarea
-            id="f-content"
-            name="content"
-            maxlength="300"
-            placeholder="본문 내용 또는 자료에 대한 설명을 입력하세요."
+              id="f-content"
+              name="content"
+              maxlength="300"
+              placeholder="본문 내용 또는 자료에 대한 설명을 입력하세요."
           ></textarea>
 
         </div>
@@ -524,25 +636,33 @@
 
         <!-- 첨부 파일 -->
 
-<div class="fld">
+        <div class="fld">
 
-  <label>
-    첨부 파일 (자료용, 선택)
-  </label>
+          <label>
+            첨부 파일 (자료용, 선택)
+          </label>
 
-  <input
-    type="file"
-    id="f-file"
-    name="uploadFile"
-    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.png,.jpeg,.jpg"
-  />
 
-  <div
-    id="current-file"
-    style="margin-top:8px;color:var(--muted);font-size:13px;display:none">
-  </div>
+          <input
+              type="file"
+              id="f-file"
+              name="uploadFile"
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.png,.jpeg,.jpg"
+          >
 
-</div>
+
+          <div
+              id="current-file"
+              style="
+                margin-top:8px;
+                color:var(--muted);
+                font-size:13px;
+                display:none">
+
+          </div>
+
+        </div>
+
 
       </form>
 
@@ -561,13 +681,15 @@
       <!-- 삭제 -->
 
       <button
-        type="button"
-        class="btn btn-danger btn-sm"
-        id="delBtn"
+          type="button"
+          class="btn btn-danger btn-sm"
+          id="delBtn"
 
-        onclick="removeItem()"
+          onclick="removeItem()"
 
-        style="margin-right:auto;display:none">
+          style="
+            margin-right:auto;
+            display:none">
 
         삭제
 
@@ -578,9 +700,9 @@
       <!-- 취소 -->
 
       <button
-        type="button"
-        class="btn btn-line"
-        onclick="closeModal()">
+          type="button"
+          class="btn btn-line"
+          onclick="closeModal()">
 
         취소
 
@@ -591,9 +713,9 @@
       <!-- 저장 -->
 
       <button
-        type="button"
-        class="btn btn-primary"
-        onclick="save()">
+          type="button"
+          class="btn btn-primary"
+          onclick="save()">
 
         저장
 
@@ -624,12 +746,16 @@
   ====================================================== */
 
   if (typeof requireAuth === 'function') {
+
     requireAuth();
+
   }
 
 
   if (typeof renderSidebar === 'function') {
+
     renderSidebar('notices');
+
   }
 
 
@@ -638,13 +764,12 @@
      DOM
   ====================================================== */
 
-  const modal = document.getElementById('modal');
+  const modal =
+      document.getElementById('modal');
 
-  const form = document.getElementById('form');
 
-  const filter = document.getElementById('filter');
-
-  const search = document.getElementById('search');
+  const form =
+      document.getElementById('form');
 
 
 
@@ -655,61 +780,75 @@
   function openModal() {
 
 
-    /*
-     * 수정 모달에서 사용했던 값 초기화
-     */
+    /* 제목 */
 
     document.getElementById('mTitle').textContent =
-      '새 공지·자료 작성';
+        '새 공지·자료 작성';
 
+
+
+    /* ID 초기화 */
 
     document.getElementById('f-id').value =
-      '';
+        '';
 
+
+
+    /* 유형 */
 
     document.getElementById('f-type').value =
-      1;
+        '1';
 
+
+
+    /* 제목 */
 
     document.getElementById('f-title').value =
-      '';
+        '';
 
 
-    /*
-     * 오늘 날짜 기본값
-     */
+
+    /* 오늘 날짜 */
 
     document.getElementById('f-date').value =
-      new Date().toISOString().slice(0, 10);
-// 업로드 파일 초기화
-  document.getElementById('f-file').value =
-    '';
+        new Date()
+            .toISOString()
+            .slice(0, 10);
 
-  document.getElementById('current-file').textContent =
-    '';
 
-  document.getElementById('current-file').style.display =
-    'none';
+
+    /* 본문 */
 
     document.getElementById('f-content').value =
-      '';
+        '';
 
+
+
+    /* 파일 초기화 */
 
     document.getElementById('f-file').value =
-      '';
+        '';
 
 
-    /*
-     * 새 글이므로 삭제 버튼 숨김
-     */
+
+    /* 기존 파일 표시 제거 */
+
+    document.getElementById('current-file').textContent =
+        '';
+
+    document.getElementById('current-file').style.display =
+        'none';
+
+
+
+    /* 삭제 버튼 숨김 */
 
     document.getElementById('delBtn').style.display =
-      'none';
+        'none';
 
 
-    /*
-     * 모달 열기
-     */
+
+    /* 모달 열기 */
 
     modal.classList.add('open');
 
@@ -725,39 +864,40 @@
 
 
     /*
-     * 클릭한 수정 버튼의 부모 <tr>
+     * 클릭한 수정 버튼의 부모 tr
      */
 
     const row =
-      button.closest('tr');
+        button.closest('tr');
+
 
 
     /*
-     * 해당 행의 Thymeleaf data-* 값 가져오기
+     * data-* 값
      */
 
     const id =
-      row.dataset.id;
+        row.dataset.id;
 
 
     const type =
-      row.dataset.type;
+        row.dataset.type;
 
 
     const title =
-      row.dataset.title;
+        row.dataset.title;
 
 
     const date =
-      row.dataset.date;
+        row.dataset.date;
 
 
     const content =
-      row.dataset.content;
+        row.dataset.content;
 
 
     const file =
-      row.dataset.file;
+        row.dataset.file;
 
 
 
@@ -766,7 +906,7 @@
      */
 
     document.getElementById('mTitle').textContent =
-      '글 수정';
+        '글 수정';
 
 
 
@@ -775,56 +915,69 @@
      */
 
     document.getElementById('f-id').value =
-      id || '';
+        id || '';
 
 
     document.getElementById('f-type').value =
-      type || 1;
+        type || '1';
 
 
     document.getElementById('f-title').value =
-      title || '';
+        title || '';
 
 
     document.getElementById('f-date').value =
-      date || '';
+        date || '';
 
 
     document.getElementById('f-content').value =
-      content || '';
+        content || '';
 
 
 
-  const currentFile =
-    document.getElementById('current-file');
+    /*
+     * 현재 파일 표시
+     */
+
+    const currentFile =
+        document.getElementById('current-file');
 
 
-  if (file) {
+    if (file) {
 
-    currentFile.textContent =
-      '현재 첨부파일: ' + file;
+      currentFile.textContent =
+          '현재 첨부파일: ' + file;
 
-    currentFile.style.display =
-      'block';
+      currentFile.style.display =
+          'block';
 
-  } else {
+    } else {
 
-    currentFile.textContent =
-      '';
+      currentFile.textContent =
+          '';
 
-    currentFile.style.display =
-      'none';
+      currentFile.style.display =
+          'none';
 
-  }
-  document.getElementById('f-file').value =
-    '';
+    }
+
+
+
+    /*
+     * 새 파일 선택값 초기화
+     */
+
+    document.getElementById('f-file').value =
+        '';
+
+
 
     /*
      * 수정이므로 삭제 버튼 표시
      */
 
     document.getElementById('delBtn').style.display =
-      'inline-flex';
+        'inline-flex';
 
 
 
@@ -858,7 +1011,11 @@
 
 
     const title =
-      document.getElementById('f-title').value.trim();
+        document
+            .getElementById('f-title')
+            .value
+            .trim();
+
 
 
     /*
@@ -874,11 +1031,24 @@
     }
 
 
+
+    /*
+     * 본문 검사
+     *
+     * 현재 기존 코드에서는 본문이 필수가 아니므로
+     * 제목만 검사합니다.
+     */
+
+
+
     /*
      * form submit
      *
      * id가 없으면 새 글
      * id가 있으면 수정
+     *
+     * 실제 수정 여부는 서버에서
+     * id를 기준으로 처리
      */
 
     form.submit();
@@ -895,37 +1065,48 @@
 
 
     const id =
-      document.getElementById('f-id').value;
+        document
+            .getElementById('f-id')
+            .value;
+
 
 
     if (!id) {
+
       return;
+
     }
 
 
+
     if (!confirm('이 글을 삭제할까요?')) {
+
       return;
+
     }
 
 
 
     /*
-     * 삭제용 form을 동적으로 생성
+     * 삭제용 form
      */
 
     const deleteForm =
-      document.createElement('form');
+        document.createElement('form');
 
 
     deleteForm.method =
-      'post';
+        'post';
 
 
     deleteForm.action =
-      '/admin/notices/delete/' + id;
+        '/admin/notices/delete/' + id;
 
 
-    document.body.appendChild(deleteForm);
+
+    document.body.appendChild(
+        deleteForm
+    );
 
 
     deleteForm.submit();
@@ -935,94 +1116,20 @@
 
 
   /* =====================================================
-     유형 / 제목 검색
-  ====================================================== */
-
-  function filterRows() {
-
-
-    const type =
-      filter.value;
-
-
-    const keyword =
-      search.value
-        .trim()
-        .toLowerCase();
-
-
-
-    const rows =
-      document.querySelectorAll(
-        '#tbl tbody tr[data-title]'
-      );
-
-
-
-    rows.forEach(row => {
-
-
-      const rowType =
-        row.dataset.type || '';
-
-
-      const rowTitle =
-        row.dataset.title || '';
-
-
-
-      const typeMatch =
-        type === 'all' ||
-        rowType === type;
-
-
-
-      const searchMatch =
-        !keyword ||
-        rowTitle.toLowerCase().includes(keyword);
-
-
-
-      row.style.display =
-        typeMatch && searchMatch
-          ? ''
-          : 'none';
-
-
-    });
-
-  }
-
-
-
-  filter.addEventListener(
-    'change',
-    filterRows
-  );
-
-
-  search.addEventListener(
-    'input',
-    filterRows
-  );
-
-
-
-  /* =====================================================
      모달 바깥 클릭 → 닫기
   ====================================================== */
 
   modal.addEventListener(
-    'click',
-    function(e) {
+      'click',
+      function(e) {
 
-      if (e.target === modal) {
+        if (e.target === modal) {
 
-        closeModal();
+          closeModal();
+
+        }
 
       }
-
-    }
   );
 
 
@@ -1031,17 +1138,17 @@
      ESC → 모달 닫기
   ====================================================== */
 
- document.addEventListener(
-    'keydown',
-    function(e) {
+  document.addEventListener(
+      'keydown',
+      function(e) {
 
-      if (e.key === 'Escape') {
+        if (e.key === 'Escape') {
 
-        closeModal();
+          closeModal();
+
+        }
 
       }
-
-    }
   );
 
 

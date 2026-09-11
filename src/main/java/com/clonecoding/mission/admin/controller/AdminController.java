@@ -6,6 +6,10 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -73,13 +77,18 @@ public class AdminController {
     }
 
     @GetMapping("/notices")
-    public String admin_notice(Model model) {
+    public String admin_notice(@RequestParam(name="type", required = false) Integer type, @RequestParam(required = false, defaultValue = "", name="keyword") String keyword, @PageableDefault( size = 10, sort = "createdAt", direction = Sort.Direction.DESC ) Pageable pageable, Model model ) {
+        
         model.addAttribute("currentUri","notice");
         // notices에 데이터 넣어가기
-        List<Post> notices = postService.findAll();
+        Page<Post> notices = postService.findAll(type, keyword, pageable);
 
         model.addAttribute("notices", notices);
 
+
+        // 검색/필터 조건 유지용
+        model.addAttribute("type", type);
+        model.addAttribute("keyword", keyword);
         return "admin/notice";
     }
 

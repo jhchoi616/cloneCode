@@ -1,8 +1,10 @@
 package com.clonecoding.mission.user.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 import com.clonecoding.mission.global.entity.Post;
 import com.clonecoding.mission.user.repository.NoticeRepository;
@@ -168,5 +170,36 @@ public class NoticeService {
     // 공지사항 및 자료실 디테일 조회
     public Post findById(Long id) {
     return noticeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+}
+    public Post findPreviousPost(Long id, Integer type, String keyword, Pageable pageable) {
+    return findAdjacent(id, type, keyword, pageable, true);
+}
+
+public Post findNextPost(Long id, Integer type, String keyword, Pageable pageable) {
+    return findAdjacent(id, type, keyword, pageable, false);
+}
+
+private Post findAdjacent(Long id, Integer type, String keyword,
+                          Pageable pageable, boolean previous) {
+
+    String kw = (keyword == null) ? "" : keyword;
+
+    Sort.Order order = pageable.getSort().getOrderFor("createdAt");
+    boolean listDesc = (order == null) || order.isDescending();
+
+    // 목록이 DESC면 이전글 = 더 큰 id
+    boolean greater = (previous == listDesc);
+
+    if (greater) {
+        return (type != null
+                ? noticeRepository.findFirstByIdGreaterThanAndTypeAndTitleContainingOrderByIdAsc(id, type, kw)
+                : noticeRepository.findFirstByIdGreaterThanAndTitleContainingOrderByIdAsc(id, kw))
+                .orElse(null);
+    }
+
+    return (type != null
+            ? noticeRepository.findFirstByIdLessThanAndTypeAndTitleContainingOrderByIdDesc(id, type, kw)
+            : noticeRepository.findFirstByIdLessThanAndTitleContainingOrderByIdDesc(id, kw))
+            .orElse(null);
 }
 }

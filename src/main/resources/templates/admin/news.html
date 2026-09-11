@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="_csrf" th:content="${_csrf.token}">
-<meta name="_csrf_header" th:content="${_csrf.headerName}">
+
+  <meta name="_csrf" th:content="${_csrf.token}">
+  <meta name="_csrf_header" th:content="${_csrf.headerName}">
+
   <title>소식 관리 — B.POINT Admin</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,7 +44,6 @@
 
 </div>
 
-
 <div class="right">
 
   <!-- 새 글 작성 -->
@@ -68,8 +70,10 @@
 
 <div class="panel">
 
-
+  <!-- ===================================================== -->
   <!-- 패널 헤더 -->
+  <!-- ===================================================== -->
+
   <div class="panel-head">
 
     <h2>
@@ -78,8 +82,7 @@
 
       <span
           style="color:var(--muted);font-weight:600;margin-left:4px"
-          th:text="'(' + ${#lists.size(newsList)} + '건)'">
-
+          th:text="'(' + ${newsList.totalElements} + '건)'">
       </span>
 
     </h2>
@@ -87,39 +90,70 @@
 
     <div class="actions">
 
+      <!-- ================================================= -->
+      <!-- 카테고리 / 제목 검색 -->
+      <!-- 서버 사이드 검색 -->
+      <!-- ================================================= -->
 
-      <!-- 카테고리 필터 -->
-      <select
-          id="filter"
-          class="btn btn-line btn-sm"
-          style="padding-right:24px">
+      <form
+          th:action="@{/admin/news}"
+          method="get"
+          style="display:flex;gap:8px;align-items:center">
 
-        <option value="all">
-          전체 카테고리
-        </option>
+        <!-- 카테고리 필터 -->
+        <select
+            name="category"
+            class="btn btn-line btn-sm"
+            style="padding-right:24px"
+            onchange="this.form.submit()">
 
-        <option value="class">
-          CLASS
-        </option>
+          <option
+              value=""
+              th:selected="${category == null}">
+            전체 카테고리
+          </option>
 
-        <option value="event">
-          EVENT
-        </option>
+          <option
+              value="1"
+              th:selected="${category == 1}">
+            CLASS
+          </option>
 
-        <option value="story">
-          STORY
-        </option>
+          <option
+              value="2"
+              th:selected="${category == 2}">
+            EVENT
+          </option>
 
-      </select>
+          <option
+              value="3"
+              th:selected="${category == 3}">
+            STORY
+          </option>
+
+        </select>
 
 
-      <!-- 제목 검색 -->
-      <input
-          type="text"
-          id="search"
-          class="btn btn-line btn-sm"
-          placeholder="제목 검색"
-          style="font-weight:500;min-width:200px" />
+        <!-- 제목 검색 -->
+        <input
+            type="text"
+            name="keyword"
+            class="btn btn-line btn-sm"
+            placeholder="제목 검색"
+            style="font-weight:500;min-width:200px"
+            th:value="${keyword}" />
+
+
+        <!-- 검색 -->
+        <button
+            type="submit"
+            class="btn btn-line btn-sm">
+
+          검색
+
+        </button>
+
+      </form>
 
     </div>
 
@@ -135,7 +169,6 @@
     <table
         class="dt"
         id="tbl">
-
 
       <thead>
 
@@ -168,8 +201,11 @@
       <tbody>
 
 
+      <!-- ================================================= -->
       <!-- 등록된 소식이 없는 경우 -->
-      <tr th:if="${#lists.isEmpty(newsList)}">
+      <!-- ================================================= -->
+
+      <tr th:if="${newsList.empty}">
 
         <td colspan="5">
 
@@ -204,28 +240,16 @@
       <!-- ================================================= -->
 
       <tr
-          th:each="news : ${newsList}"
+          th:each="news : ${newsList}">
 
-          th:attr="
-            data-category=${
-                news.category == 1
-                ? 'class'
-                : news.category == 2
-                ? 'event'
-                : 'story'
-            },
-
-            data-title=${news.title}
-          ">
-
-
+        <!-- ================================================= -->
         <!-- 카테고리 -->
-        <td>
+        <!-- ================================================= -->
 
+        <td>
 
           <span
               class="badge-tag"
-
               th:text="${
                 news.category == 1
                 ? 'CLASS'
@@ -238,6 +262,7 @@
 
 
           <!-- EVENT 사례 표시 -->
+
           <span
               th:if="${news.isView}"
               class="badge-tag new"
@@ -249,13 +274,14 @@
 
           </span>
 
-
         </td>
 
 
+        <!-- ================================================= -->
         <!-- 제목 -->
-        <td>
+        <!-- ================================================= -->
 
+        <td>
 
           <div
               style="
@@ -278,19 +304,26 @@
 
           </div>
 
-
         </td>
 
 
+        <!-- ================================================= -->
         <!-- 날짜 -->
+        <!-- ================================================= -->
+
         <td
             style="color:var(--muted)"
-            th:text="${news.startDate}">
+            th:text="${news.startDate != null
+                ? #temporals.format(news.startDate, 'yyyy-MM-dd')
+                : ''}">
 
         </td>
 
 
+        <!-- ================================================= -->
         <!-- 작성자 -->
+        <!-- ================================================= -->
+
         <td
             style="color:var(--soft)"
             th:text="${
@@ -302,18 +335,18 @@
         </td>
 
 
+        <!-- ================================================= -->
         <!-- 버튼 -->
+        <!-- ================================================= -->
+
         <td class="actions">
 
-
           <!-- 수정 -->
+
           <button
               type="button"
               class="btn btn-line btn-sm"
-
-              th:attr="
-                onclick=|editItem(${news.id})|
-              ">
+              th:onclick="|editItem(${news.id})|">
 
             수정
 
@@ -321,18 +354,15 @@
 
 
           <!-- 삭제 -->
+
           <button
               type="button"
               class="btn btn-danger btn-sm"
-
-              th:attr="
-                onclick=|deleteItem(${news.id})|
-              ">
+              th:onclick="|deleteItem(${news.id})|">
 
             삭제
 
           </button>
-
 
         </td>
 
@@ -341,6 +371,75 @@
       </tbody>
 
     </table>
+
+
+    <!-- ===================================================== -->
+    <!-- 페이지네이션 -->
+    <!-- ===================================================== -->
+
+    <div
+        class="pagination"
+        th:if="${newsList.totalPages > 0}"
+        style="
+          display:flex;
+          justify-content:center;
+          align-items:center;
+          gap:6px;
+          margin-top:20px;
+          padding:10px;
+          border-top:1.5px solid #aaa;">
+
+      <!-- 이전 -->
+
+      <a
+          th:if="${newsList.hasPrevious()}"
+          th:href="@{/admin/news(
+              page=${newsList.number - 1},
+              size=${newsList.size},
+              category=${category},
+              keyword=${keyword}
+          )}"
+          class="btn btn-line btn-sm">
+
+        이전
+
+      </a>
+
+
+      <!-- 페이지 번호 -->
+
+      <a
+          th:each="pageNum : ${#numbers.sequence(0, newsList.totalPages - 1)}"
+          th:href="@{/admin/news(
+              page=${pageNum},
+              size=${newsList.size},
+              category=${category},
+              keyword=${keyword}
+          )}"
+          th:text="${pageNum + 1}"
+          class="btn btn-line btn-sm"
+          th:classappend="${pageNum == newsList.number} ? ' active'">
+
+      </a>
+
+
+      <!-- 다음 -->
+
+      <a
+          th:if="${newsList.hasNext()}"
+          th:href="@{/admin/news(
+              page=${newsList.number + 1},
+              size=${newsList.size},
+              category=${category},
+              keyword=${keyword}
+          )}"
+          class="btn btn-line btn-sm">
+
+        다음
+
+      </a>
+
+    </div>
 
   </div>
 
@@ -370,11 +469,9 @@
 
 <div class="modal-head">
 
-
   <h3 id="mTitle">
     새 소식 작성
   </h3>
-
 
   <button
       type="button"
@@ -385,9 +482,7 @@
 
   </button>
 
-
 </div>
-
 
 
 <!-- ===================================================== -->
@@ -396,11 +491,10 @@
 
 <div class="modal-body">
 
-
   <form id="form">
 
-
     <!-- 수정할 News ID -->
+
     <input
         type="hidden"
         id="f-id" />
@@ -412,13 +506,11 @@
 
     <div class="fld-row">
 
-
       <div class="fld">
 
         <label>
           카테고리 *
         </label>
-
 
         <select
             id="f-category"
@@ -441,13 +533,11 @@
       </div>
 
 
-
       <div class="fld">
 
         <label>
           날짜
         </label>
-
 
         <input
             type="date"
@@ -455,9 +545,7 @@
 
       </div>
 
-
     </div>
-
 
 
     <!-- ================================================= -->
@@ -470,7 +558,6 @@
         제목 *
       </label>
 
-
       <input
           type="text"
           id="f-title"
@@ -479,7 +566,6 @@
           placeholder="제목을 입력하세요" />
 
     </div>
-
 
 
     <!-- ================================================= -->
@@ -492,7 +578,6 @@
         요약
       </label>
 
-
       <textarea
           id="f-excerpt"
           style="min-height:60px"
@@ -500,7 +585,6 @@
           placeholder="짧은 요약문 (1~2문장)"></textarea>
 
     </div>
-
 
 
     <!-- ================================================= -->
@@ -513,7 +597,6 @@
         본문 *
       </label>
 
-
       <textarea
           id="f-content"
           required
@@ -524,20 +607,17 @@
     </div>
 
 
-
     <!-- ================================================= -->
     <!-- 작성자 / 이미지 -->
     <!-- ================================================= -->
 
     <div class="fld-row">
 
-
       <div class="fld">
 
         <label>
           작성자
         </label>
-
 
         <input
             type="text"
@@ -548,13 +628,11 @@
       </div>
 
 
-
       <div class="fld">
 
         <label>
           대표 이미지 URL
         </label>
-
 
         <input
             type="text"
@@ -563,9 +641,7 @@
 
       </div>
 
-
     </div>
-
 
 
     <!-- ================================================= -->
@@ -582,7 +658,6 @@
           border-radius:8px;
           padding:14px 16px">
 
-
       <label
           style="
             display:flex;
@@ -592,7 +667,6 @@
             margin:0;
             color:var(--ink)">
 
-
         <input
             type="checkbox"
             id="f-show-in-event"
@@ -600,7 +674,6 @@
               width:auto;
               margin:0;
               cursor:pointer" />
-
 
         <span
             style="
@@ -612,7 +685,6 @@
           이벤트 상세 페이지 '사례' 항목에 표시
 
         </span>
-
 
       </label>
 
@@ -630,14 +702,11 @@
 
       </p>
 
-
     </div>
-
 
   </form>
 
 </div>
-
 
 
 <!-- ===================================================== -->
@@ -646,8 +715,8 @@
 
 <div class="modal-foot">
 
-
   <!-- 수정 모드에서만 나타나는 삭제 버튼 -->
+
   <button
       type="button"
       class="btn btn-danger btn-sm"
@@ -662,7 +731,6 @@
   </button>
 
 
-
   <button
       type="button"
       class="btn btn-line"
@@ -671,7 +739,6 @@
     취소
 
   </button>
-
 
 
   <button
@@ -683,7 +750,6 @@
 
   </button>
 
-
 </div>
 
   </div>
@@ -693,29 +759,8 @@
 <script src="/js/admin-common.js"></script>
 
 <script>
-  const numberToCategory = {
 
-    1: 'class',
-
-    2: 'event',
-
-    3: 'story'
-
-  };
-      const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
-
-    const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
-  /*
-   * ============================================================
-   * 공통
-   * ============================================================
-   */
-
-
-
-
-  /*
-   * ============================================================
+  /* ============================================================
    * 카테고리 변환
    *
    * DB
@@ -725,137 +770,118 @@
    *
    * 화면
    * class / event / story
-   * ============================================================
-   */
+   * ============================================================ */
 
-  const categoryToNumber = {
-
-    class: 1,
-
-    event: 2,
-
-    story: 3
-
+  const numberToCategory = {
+    1: 'class',
+    2: 'event',
+    3: 'story'
   };
 
 
+  const categoryToNumber = {
+    class: 1,
+    event: 2,
+    story: 3
+  };
 
 
+  /* ============================================================
+   * CSRF
+   * ============================================================ */
+
+  const csrfToken =
+      document.querySelector(
+          'meta[name="_csrf"]'
+      )?.content;
+
+  const csrfHeader =
+      document.querySelector(
+          'meta[name="_csrf_header"]'
+      )?.content;
 
 
-  /*
-   * ============================================================
+  /* ============================================================
    * 모달 열기
    *
    * item이 없으면 신규 작성
    * item이 있으면 수정
-   * ============================================================
-   */
+   * ============================================================ */
 
   function openModal(item = null) {
 
-    /*
-     * 제목
-     */
+    /* 제목 */
+
     document.getElementById('mTitle').textContent =
         item
         ? '소식 수정'
         : '새 소식 작성';
 
-    /*
-     * ID
-     *
-     * 신규:
-     * ''
-     *
-     * 수정:
-     * News ID
-     */
+
+    /* ID */
+
     document.getElementById('f-id').value =
         item?.id ?? '';
 
-    /*
-     * 카테고리
-     *
-     * News.category는 Integer이므로
-     * 화면의 class/event/story로 변환
-     */
-    document.getElementById('f-category').value =
-        item ? numberToCategory[item.category] ?? 'class' : 'class';
 
-    /*
-     * 시작일
-     */
+    /* 카테고리 */
+
+    document.getElementById('f-category').value =
+        item
+        ? numberToCategory[item.category] ?? 'class'
+        : 'class';
+
+
+    /* 시작일 */
+
     document.getElementById('f-date').value =
         item?.startDate
         ?? new Date().toISOString().slice(0, 10);
 
-    /*
-     * 제목
-     */
+
+    /* 제목 */
+
     document.getElementById('f-title').value =
         item?.title ?? '';
 
-    /*
-     * 요약
-     */
+
+    /* 요약 */
 
     document.getElementById('f-excerpt').value =
         item?.excerpt ?? '';
 
-    /*
-     * 본문
-     */
+
+    /* 본문 */
+
     document.getElementById('f-content').value =
         item?.content ?? '';
 
-    /*
-     * 작성자
-     */
+
+    /* 작성자 */
+
     document.getElementById('f-author').value =
         item?.createdBy
         ?? 'B.POINT';
 
-    /*
-     * 이미지
-     *
-     * News Entity:
-     * private String ImageUrl;
-     *
-     * Lombok getter 기준 JSON 이름은 imageUrl
-     */
+
+    /* 이미지 */
 
     document.getElementById('f-image').value =
         item?.imageUrl ?? '';
 
 
-
-    /*
-     * EVENT 사례 여부
-     */
+    /* EVENT 사례 여부 */
 
     document.getElementById('f-show-in-event').checked =
         item?.isView === true;
 
 
-
-    /*
-     * EVENT 옵션 표시 여부
-     */
+    /* EVENT 옵션 표시 */
 
     toggleEventOption();
 
 
-
-    /*
-     * 삭제 버튼
-     *
-     * 신규 작성:
-     * 숨김
-     *
-     * 수정:
-     * 표시
-     */
+    /* 삭제 버튼 */
 
     document.getElementById('delBtn').style.display =
         item
@@ -863,10 +889,7 @@
         : 'none';
 
 
-
-    /*
-     * 모달 열기
-     */
+    /* 모달 열기 */
 
     document
         .getElementById('modal')
@@ -876,12 +899,9 @@
   }
 
 
-
-  /*
-   * ============================================================
+  /* ============================================================
    * 모달 닫기
-   * ============================================================
-   */
+   * ============================================================ */
 
   function closeModal() {
 
@@ -893,12 +913,9 @@
   }
 
 
-
-  /*
-   * ============================================================
+  /* ============================================================
    * EVENT 옵션
-   * ============================================================
-   */
+   * ============================================================ */
 
   function toggleEventOption() {
 
@@ -914,10 +931,9 @@
   }
 
 
-
-  /*
+  /* ============================================================
    * 카테고리 변경 감지
-   */
+   * ============================================================ */
 
   document
       .getElementById('f-category')
@@ -927,9 +943,7 @@
       );
 
 
-
-  /*
-   * ============================================================
+  /* ============================================================
    * 수정
    *
    * 수정 버튼
@@ -939,13 +953,11 @@
    * News JSON
    * ↓
    * openModal(item)
-   * ============================================================
-   */
+   * ============================================================ */
 
   async function editItem(id) {
 
     try {
-
 
       console.log(
           '뉴스 조회:',
@@ -965,10 +977,7 @@
           );
 
 
-
-      /*
-       * 서버 오류
-       */
+      /* 서버 오류 */
 
       if (!response.ok) {
 
@@ -984,14 +993,10 @@
       }
 
 
-
-      /*
-       * JSON 변환
-       */
+      /* JSON 변환 */
 
       const item =
           await response.json();
-
 
 
       console.log(
@@ -1000,10 +1005,7 @@
       );
 
 
-
-      /*
-       * 모달에 데이터 입력
-       */
+      /* 모달에 데이터 입력 */
 
       openModal(item);
 
@@ -1025,9 +1027,7 @@
   }
 
 
-
-  /*
-   * ============================================================
+  /* ============================================================
    * 저장
    *
    * 신규:
@@ -1035,15 +1035,11 @@
    *
    * 수정:
    * PUT /admin/news/{id}
-   * ============================================================
-   */
+   * ============================================================ */
 
   async function save() {
 
-
-    /*
-     * 수정 여부 확인
-     */
+    /* 수정 여부 확인 */
 
     const id =
         document
@@ -1051,18 +1047,7 @@
             .value;
 
 
-
-    /*
-     * 화면 category
-     *
-     * class/event/story
-     *
-     * 를 DB용
-     *
-     * 1/2/3
-     *
-     * 으로 변환
-     */
+    /* 화면 category */
 
     const categoryText =
         document
@@ -1070,23 +1055,18 @@
             .value;
 
 
+    /* 화면 category → DB category */
+
     const category =
         categoryToNumber[categoryText];
 
 
-
-    /*
-     * 데이터 생성
-     *
-     * News Entity 필드명과 일치
-     */
+    /* 데이터 생성 */
 
     const data = {
 
-
       category:
           category,
-
 
       title:
           document
@@ -1094,13 +1074,11 @@
               .value
               .trim(),
 
-
       excerpt:
           document
               .getElementById('f-excerpt')
               .value
               .trim(),
-
 
       content:
           document
@@ -1108,14 +1086,12 @@
               .value
               .trim(),
 
-
       imageUrl:
           document
               .getElementById('f-image')
               .value
               .trim()
           || null,
-
 
       startDate:
           document
@@ -1125,14 +1101,12 @@
               .toISOString()
               .slice(0, 10),
 
-
       isView:
           categoryText === 'event'
           &&
           document
               .getElementById('f-show-in-event')
               .checked,
-
 
       createdBy:
           document
@@ -1144,10 +1118,9 @@
     };
 
 
-
-    /*
+    /* ==========================================================
      * 필수값 검사
-     */
+     * ========================================================== */
 
     if (!data.title) {
 
@@ -1171,33 +1144,39 @@
     }
 
 
-
-    /*
-     * ==========================================================
+    /* ==========================================================
      * 서버 전송
-     * ==========================================================
-     */
+     * ========================================================== */
 
     try {
+
       let response;
 
-      /*
+
+      /* =======================================================
        * 신규 등록
-       */
+       * ======================================================= */
+
       if (!id) {
+
         console.log(
             '뉴스 신규 등록:',
             data
         );
-        response = await fetch(
+
+
+        response =
+            await fetch(
                 '/admin/news',
                 {
                   method: 'POST',
+
                   headers: {
                     'Content-Type': 'application/json',
-                  'Accept': 'application/json',
-                  [csrfHeader]: csrfToken
+                    'Accept': 'application/json',
+                    [csrfHeader]: csrfToken
                   },
+
                   body:
                       JSON.stringify(data)
                 }
@@ -1205,42 +1184,43 @@
 
       }
 
-      /*
+
+      /* =======================================================
        * 수정
-       */
+       * ======================================================= */
+
       else {
+
         console.log(
             '뉴스 수정:',
             id,
             data
         );
+
+
         response =
             await fetch(
                 '/admin/news/' + id,
                 {
-
                   method: 'PUT',
 
                   headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json',
-                  [csrfHeader]: csrfToken
-
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    [csrfHeader]: csrfToken
                   },
 
                   body:
                       JSON.stringify(data)
-
                 }
             );
 
       }
 
 
-
-      /*
+      /* =======================================================
        * 응답 확인
-       */
+       * ======================================================= */
 
       if (!response.ok) {
 
@@ -1256,16 +1236,16 @@
 
       }
 
-      /*
-       * 모달 닫기
-       */
+
+      /* 모달 닫기 */
 
       closeModal();
 
-      /*
-       * 목록 새로고침
-       */
+
+      /* 목록 새로고침 */
+
       location.reload();
+
 
     } catch (error) {
 
@@ -1273,6 +1253,8 @@
           'save 오류:',
           error
       );
+
+
       alert(
           error.message
       );
@@ -1282,16 +1264,14 @@
   }
 
 
-
-  /*
-   * ============================================================
+  /* ============================================================
    * 목록에서 삭제
    *
    * DELETE /admin/news/{id}
-   * ============================================================
-   */
+   * ============================================================ */
 
   async function deleteItem(id) {
+
     if (
         !confirm(
             '이 소식을 삭제할까요?'
@@ -1301,21 +1281,25 @@
       return;
 
     }
-    try {
 
+
+    try {
 
       const response =
           await fetch(
               '/admin/news/' + id,
               {
                 method: 'DELETE',
-                headers:{
+
+                headers: {
                   [csrfHeader]: csrfToken
                 }
               }
           );
 
+
       if (!response.ok) {
+
         throw new Error(
             '삭제에 실패했습니다.'
         );
@@ -1323,10 +1307,7 @@
       }
 
 
-
-      /*
-       * 삭제 성공
-       */
+      /* 삭제 성공 */
 
       location.reload();
 
@@ -1348,23 +1329,20 @@
   }
 
 
-
-  /*
-   * ============================================================
+  /* ============================================================
    * 모달에서 삭제
-   * ============================================================
-   */
+   * ============================================================ */
 
   async function removeItem() {
+
     const id =
         document
             .getElementById('f-id')
             .value;
 
-    /*
-     * 신규 작성 모달에서는
-     * 삭제할 ID가 없음
-     */
+
+    /* 신규 작성 모달에서는 삭제할 ID가 없음 */
+
     if (!id) {
 
       return;
@@ -1372,126 +1350,20 @@
     }
 
 
-
     await deleteItem(id);
 
   }
 
 
-
-  /*
-   * ============================================================
-   * 카테고리 필터
-   * ============================================================
-   */
-
-  document
-      .getElementById('filter')
-      .addEventListener(
-          'change',
-          function () {
-
-
-            const value =
-                this.value;
-
-
-
-            document
-                .querySelectorAll(
-                    '#tbl tbody tr[data-category]'
-                )
-                .forEach(
-                    row => {
-
-
-                      const category =
-                          row.dataset.category;
-
-
-
-                      const visible =
-                          value === 'all'
-                          ||
-                          category === value;
-
-
-
-                      row.style.display =
-                          visible
-                          ? ''
-                          : 'none';
-
-                    }
-                );
-
-          }
-      );
-
-
-
-  /*
-   * ============================================================
-   * 제목 검색
-   * ============================================================
-   */
-
-  document
-      .getElementById('search')
-      .addEventListener(
-          'input',
-          function () {
-
-
-            const keyword =
-                this.value
-                    .toLowerCase()
-                    .trim();
-
-
-
-            document
-                .querySelectorAll(
-                    '#tbl tbody tr[data-title]'
-                )
-                .forEach(
-                    row => {
-
-
-                      const title =
-                          (
-                            row.dataset.title
-                            || ''
-                          )
-                          .toLowerCase();
-
-
-
-                      row.style.display =
-                          title.includes(keyword)
-                          ? ''
-                          : 'none';
-
-                    }
-                );
-
-          }
-      );
-
-
-
-  /*
-   * ============================================================
+  /* ============================================================
    * 모달 바깥 클릭
-   * ============================================================
-   */
+   * ============================================================ */
 
   document
       .getElementById('modal')
       .addEventListener(
           'click',
           function (e) {
-
 
             if (
                 e.target.id === 'modal'
@@ -1503,6 +1375,24 @@
 
           }
       );
+
+
+  /* ============================================================
+   * ESC로 모달 닫기
+   * ============================================================ */
+
+  document.addEventListener(
+      'keydown',
+      function (e) {
+
+        if (e.key === 'Escape') {
+
+          closeModal();
+
+        }
+
+      }
+  );
 
 </script>
 

@@ -307,7 +307,8 @@
 
             <article class="ncard"
                      th:each="news, stat : ${newsList}"
-                     th:onclick="|location.href='@{/news/{id}(id=${news.id})}'|">
+         th:data-url="@{/news/{id}(id=${news.id}, category=${selectedCategory})}"
+         onclick="location.href=this.dataset.url">
 
                 <!-- 이미지 -->
                 <div class="nimg"

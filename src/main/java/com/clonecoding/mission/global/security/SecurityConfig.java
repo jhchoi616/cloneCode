@@ -26,7 +26,10 @@ public class SecurityConfig {
                 .csrfTokenRepository(
                     CookieCsrfTokenRepository.withHttpOnlyFalse()
                 )
+                .ignoringRequestMatchers("/admin/login")
             )
+
+
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/admin/login").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")

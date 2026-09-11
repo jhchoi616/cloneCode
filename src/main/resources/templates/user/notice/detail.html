@@ -277,7 +277,7 @@
         <span
           class="size"
           th:if="${post.fileSize != null}"
-          th:text="'(' + ${post.fileSize} + ' bytes)'">
+          th:text="'(' + ${post.formattedFileSize} + ')'">
           (12.4 MB)
         </span>
 
@@ -314,7 +314,7 @@
         </div>
 
         <a
-          th:href="@{/notice/{id}(id=${previousPost.id})}">
+          th:href="@{/notice/{id}(id=${previousPost.id})} + ${listUri}">
 
           <span
             class="cat"
@@ -359,7 +359,7 @@
         </div>
 
         <a
-          th:href="@{/notice/{id}(id=${nextPost.id})}">
+          th:href="@{/notice/{id}(id=${nextPost.id})} + ${listUri}">
 
           <span
             class="cat"
@@ -401,7 +401,7 @@
 
       <a
         class="btn btn-line"
-        th:href="@{/notice}">
+        th:href="@{/notice}+${listUri}">
         목록 →
       </a>
 

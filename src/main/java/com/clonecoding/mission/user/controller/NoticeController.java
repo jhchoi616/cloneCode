@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 
 import com.clonecoding.mission.global.entity.Post;
 import com.clonecoding.mission.user.service.NoticeService;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 
 @Controller
@@ -68,16 +70,32 @@ public class NoticeController {
         model.addAttribute( "noticeCount", noticeService.getNoticeCount() );
 
         model.addAttribute( "dataCount", noticeService.getDataCount() );
+        model.addAttribute( "listUri", buildListQuery(type, keyword, pageable));
+    return "user/notice/notice";
+}
 
-        return "user/notice/notice";
-    }
-
+        private String buildListQuery(Integer type, String keyword, Pageable pageable) {
+        UriComponentsBuilder b = UriComponentsBuilder.newInstance();
+        if (type != null) b.queryParam("type", type);
+        if (StringUtils.hasText(keyword)) b.queryParam("keyword", keyword);
+        b.queryParam("page", pageable.getPageNumber());
+        b.queryParam("size", pageable.getPageSize());
+        pageable.getSort().forEach(o ->
+                b.queryParam("sort", o.getProperty() + "," + o.getDirection().name()));
+        return b.encode(StandardCharsets.UTF_8).toUriString();
+        }
     @GetMapping("/{id}")
-    public String getNotices( @PathVariable("id") Long id,Model model) {
+    public String getNotices( @PathVariable("id") Long id,@RequestParam(name="type", required = false) Integer type, @RequestParam(required = false, defaultValue = "", name="keyword") String keyword,@PageableDefault( size = 9, sort = "createdAt", direction = Sort.Direction.DESC ) Pageable pageable, Model model) {
         Post post = noticeService.findById(id);
         model.addAttribute("post", post);
         model.addAttribute("currentUri", "/notice");
+        model.addAttribute("previousPost",noticeService.findPreviousPost(id, type, keyword, pageable));
+        model.addAttribute("nextPost",noticeService.findNextPost(id, type, keyword, pageable));
+        model.addAttribute( "listUri", buildListQuery(type, keyword, pageable));
+        // previousPost
+        // nextPost
         // model.addAttribute("posts",postRepository.findByTypeOrderByIdDesc(1));
+        System.out.println("넘어온 값 : "+pageable.getSort());
         return "user/notice/detail";
     }
 

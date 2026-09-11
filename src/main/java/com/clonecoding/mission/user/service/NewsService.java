@@ -17,10 +17,10 @@ public class NewsService {
     public Page<News> findNews(Integer category,Pageable pageable) {
 
         if (category == null ) {
-            return newsRepository.findAll(pageable);
+            return newsRepository.findAllByOrderByIdDesc(pageable);
         }
 
-        return newsRepository.findByCategory( category, pageable );
+        return newsRepository.findByCategoryOrderByIdDesc( category, pageable );
     }
 
     public News findById(Long id) {
@@ -37,9 +37,17 @@ public class NewsService {
         return newsRepository.findFirstByIdLessThanOrderByIdDesc(id)
                 .orElse(null);
     }
-
+    
     public News findNext(Long id) {
         return newsRepository.findFirstByIdGreaterThanOrderByIdAsc(id)
+        .orElse(null);
+    }
+    public News findPreviousWithCategory(Long id, Integer category) {
+        return newsRepository.findFirstByIdLessThanAndCategoryOrderByIdDesc(id, category)
+                .orElse(null);
+    }
+    public News findNextWithCategory(Long id, Integer category) {
+        return newsRepository.findFirstByIdGreaterThanAndCategoryOrderByIdAsc(id, category)
                 .orElse(null);
     }
 }

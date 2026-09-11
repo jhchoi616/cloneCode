@@ -3,6 +3,10 @@ package com.clonecoding.mission.admin.controller;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,17 +30,33 @@ public class AdminInquiryController {
     private final AdminInquiryService adminInquiryService;
     
     @GetMapping
-    public String admin_inquiry(@RequestParam(name="type", required = false) Integer type,Model model) {
-        model.addAttribute("currentUri","inquiry");
-        List<Contact> inquiries;
+    public String admin_inquiry(
+        @RequestParam(name = "type", required = false) Integer type,
 
-    if (type == null ) {
-        inquiries = adminInquiryService.findAllByOrderByCreatedAtDescIdDesc();
-    } else {
-        inquiries = adminInquiryService.findByTypeOrderByCreatedAtDescIdDesc(type);
-    }
+        @PageableDefault(
+                size = 10,
+                sort = "createdAt",
+                direction = Sort.Direction.DESC
+        ) Pageable pageable,
+
+        Model model
+    ) {
+        model.addAttribute("currentUri", "inquiry");
+
+        Page<Contact> inquiries;
+
+        if (type == null) {
+            inquiries = adminInquiryService.findAllByOrderByCreatedAtDescIdDesc(pageable);
+        } else {
+            inquiries = adminInquiryService.findByTypeOrderByCreatedAtDescIdDesc(
+                    type,
+                    pageable
+            );
+        }
+
         model.addAttribute("type", type);
         model.addAttribute("inquiries", inquiries);
+
         return "admin/inquiry";
     }
 

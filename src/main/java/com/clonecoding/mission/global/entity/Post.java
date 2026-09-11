@@ -43,4 +43,30 @@ public class Post {
     private String modifiedBy;
     private LocalDateTime modifiedAt;
 
+    public String getFormattedFileSize() {
+    if (fileSize == null) {
+        return "";
+    }
+
+    if (Integer.parseInt(fileSize) < 1024) {
+        return fileSize + " bytes";
+    }
+
+    double kb = Double.parseDouble(fileSize) / 1024.0;
+
+    if (kb < 1024) {
+        return String.format("%.1f KB", kb);
+    }
+
+    double mb = kb / 1024.0;
+
+    if (mb < 1024) {
+        return String.format("%.1f MB", mb);
+    }
+
+    double gb = mb / 1024.0;
+
+    return String.format("%.1f GB", gb);
+    }
+
 }

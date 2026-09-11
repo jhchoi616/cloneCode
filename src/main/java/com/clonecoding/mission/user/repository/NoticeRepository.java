@@ -1,7 +1,7 @@
 package com.clonecoding.mission.user.repository;
 
 import java.util.List;
-
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -62,4 +62,19 @@ Page<Post> findByTypeAndTitleContaining(
         String keyword,
         Pageable pageable
 );
+
+
+Optional<Post> findFirstByIdLessThanAndTitleContainingOrderByIdDesc(
+        Long id, String keyword);
+
+Optional<Post> findFirstByIdLessThanAndTypeAndTitleContainingOrderByIdDesc(
+        Long id, Integer type, String keyword);
+
+// 다음 글 (id가 더 큰 것 중 가장 작은 것)
+Optional<Post> findFirstByIdGreaterThanAndTitleContainingOrderByIdAsc(
+        Long id, String keyword);
+
+Optional<Post> findFirstByIdGreaterThanAndTypeAndTitleContainingOrderByIdAsc(
+        Long id, Integer type, String keyword);
+
 }

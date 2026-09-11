@@ -216,7 +216,8 @@
 
       <img
         th:src="${news.imageUrl != null and !#strings.isEmpty(news.imageUrl) ? news.imageUrl : '/assets/헤더 로고.png'}"
-        th:alt="${news.title}" />
+        th:alt="${news.title}"
+        onerror="this.onerror=null; this.src='/assets/헤더 로고.png';" />
 
     </div>
 
@@ -244,9 +245,11 @@
         <div class="dir">
           이전글
         </div>
+        
 
-        <a
-          th:href="@{/news/{id}(id=${previousNews.id})}">
+        <a th:href="${selectedCategory != null
+        ? '/news/' + previousNews.id + '?category=' + selectedCategory
+        : '/news/' + previousNews.id}">
 
           <span
             class="cat"
@@ -274,8 +277,10 @@
           다음글
         </div>
 
-        <a
-          th:href="@{/news/{id}(id=${nextNews.id})}">
+        <a th:href="${selectedCategory != null
+        ? '/news/' + nextNews.id + '?category=' + selectedCategory
+        : '/news/' + nextNews.id}">
+      
 
           <span
             class="cat"
