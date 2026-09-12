@@ -56,6 +56,15 @@ class ContactControllerTest {
     }
 
     @Test
+    void 이메일만_입력하면_이메일만_저장된다() {
+        ResponseEntity<?> response = submit("test@example.com");
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(((Contact) response.getBody()).getContact())
+                .isEqualTo("test@example.com");
+    }
+
+    @Test
     void 전화번호와_이메일이_공백으로_함께_들어오면_표준구분자로_합쳐진다() {
         ResponseEntity<?> response = submit("010 1234 5678   test@example.com");
 
