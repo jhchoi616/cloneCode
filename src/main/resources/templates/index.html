@@ -806,6 +806,16 @@
     event.preventDefault();
 
     const form = this;
+    const contactInput = form.querySelector('#contact');
+    const contactCheck = window.bpointFormatContact(contactInput.value);
+
+    if (!contactCheck.valid) {
+      alert('회신 받으실 연락처 또는 이메일을 정확히 입력해주세요.');
+      contactInput.focus();
+      return;
+    }
+
+    contactInput.value = contactCheck.value;
 
     try {
       const response = await fetch(form.action, {
@@ -816,7 +826,12 @@
 
       if (!response.ok) {
         hiddenMsg.style.display = 'none';
-        throw new Error('문의 접수에 실패했습니다.');
+        let message = '문의 접수에 실패했습니다.';
+        try {
+          const err = await response.json();
+          if (err && err.message) message = err.message;
+        } catch (e) {}
+        throw new Error(message);
       }
 
       const result = await response.json();
@@ -834,7 +849,7 @@
 
       hiddenMsg.style.display = 'none';
 
-      alert('문의 접수 중 오류가 발생했습니다.');
+      alert(error.message || '문의 접수 중 오류가 발생했습니다.');
     }
   });
 
