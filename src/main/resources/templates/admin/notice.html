@@ -354,7 +354,10 @@
 
                   onsubmit="return confirm('이 글을 삭제할까요?');"
               >
-
+              <input
+                  type="hidden"
+                  th:name="${_csrf.parameterName}"
+                  th:value="${_csrf.token}">
                 <button
                     type="submit"
                     class="btn btn-danger btn-sm">
@@ -481,7 +484,13 @@
 
 </main>
 
-
+<!-- csrf용 form -->
+<form id="csrf-form" style="display:none;">
+    <input
+        type="hidden"
+        th:name="${_csrf.parameterName}"
+        th:value="${_csrf.token}">
+</form>
 
 <!-- =====================================================
      공지 / 자료 작성 및 수정 모달
@@ -533,8 +542,11 @@
           th:action="@{/admin/notices/save}"
           method="post"
           enctype="multipart/form-data">
-
-
+<!-- csrf 왜 없지 -->
+    <input
+        type="hidden"
+        th:name="${_csrf.parameterName}"
+        th:value="${_csrf.token}">
         <!-- 수정할 때 사용할 ID -->
 
         <input
@@ -650,6 +662,25 @@
               accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.png,.jpeg,.jpg"
           >
 
+<div
+    id="file-size"
+    style="
+        margin-top:8px;
+        color:var(--muted);
+        font-size:13px;">
+    파일 용량: 0MB / 20MB
+</div>
+
+<div
+    id="file-error"
+    style="
+        margin-top:5px;
+        color:#d32f2f;
+        font-size:13px;
+        font-weight:600;
+        display:none;">
+</div>
+
 
           <div
               id="current-file"
@@ -746,30 +777,65 @@
   ====================================================== */
 
   if (typeof requireAuth === 'function') {
-
     requireAuth();
-
   }
-
 
   if (typeof renderSidebar === 'function') {
-
     renderSidebar('notices');
-
   }
 
+  // 파일 용량 관련 작성하려고 했는데..?
+const fileInput = document.getElementById('f-file');
+const fileSize = document.getElementById('file-size');
+const fileError = document.getElementById('file-error');
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
 
+
+fileInput.addEventListener('change', function () {
+
+    fileError.style.display = 'none';
+    fileError.textContent = '';
+
+    const file = this.files[0];
+
+    if (!file) {
+        fileSize.textContent =
+            '파일 용량: 0MB / 20MB';
+
+        fileSize.style.color =
+            'var(--muted)';
+
+        return;
+    }
+    const sizeMB =
+        file.size / (1024 * 1024);
+
+    fileSize.textContent =
+        `파일 용량: ${sizeMB.toFixed(2)}MB / 20MB`;
+    if (file.size > MAX_FILE_SIZE) {
+
+      fileSize.style.color =
+            '#d32f2f';
+
+        fileError.textContent =
+            '파일 용량은 20MB를 초과할 수 없습니다.';
+
+        fileError.style.display = 'block';
+
+        this.value = '';
+
+        return;
+    }
+  fileSize.style.color = 'var(--muted)';
+  fileError.style.display = 'none';
+});
   /* =====================================================
      DOM
   ====================================================== */
+  const modal = document.getElementById('modal');
 
-  const modal =
-      document.getElementById('modal');
-
-
-  const form =
-      document.getElementById('form');
+  const form = document.getElementById('form');
 
 
 
@@ -779,77 +845,46 @@
 
   function openModal() {
 
-
     /* 제목 */
-
-    document.getElementById('mTitle').textContent =
-        '새 공지·자료 작성';
-
-
+    document.getElementById('mTitle').textContent = '새 공지·자료 작성';
 
     /* ID 초기화 */
-
-    document.getElementById('f-id').value =
-        '';
-
-
+    document.getElementById('f-id').value = '';
 
     /* 유형 */
-
-    document.getElementById('f-type').value =
-        '1';
-
-
+    document.getElementById('f-type').value = '1';
 
     /* 제목 */
-
-    document.getElementById('f-title').value =
-        '';
-
-
+    document.getElementById('f-title').value = '';
 
     /* 오늘 날짜 */
-
-    document.getElementById('f-date').value =
-        new Date()
-            .toISOString()
-            .slice(0, 10);
-
-
+    document.getElementById('f-date').value = new Date().toISOString().slice(0, 10);
 
     /* 본문 */
-
-    document.getElementById('f-content').value =
-        '';
-
-
+    document.getElementById('f-content').value = '';
 
     /* 파일 초기화 */
+    document.getElementById('f-file').value = '';
 
-    document.getElementById('f-file').value =
-        '';
+    // 파일 용량 내용 초기화
+    fileSize.textContent = '파일 용량: 0MB / 20MB';
 
+    // 파일 용량 폰트 색상 초기화
+    fileSize.style.color = 'var(--muted)';
 
+    // 파일 에러 내용 및 가시화 초기화
+    fileError.textContent = '';
+    fileError.style.display = 'none';
 
     /* 기존 파일 표시 제거 */
-
-    document.getElementById('current-file').textContent =
-        '';
-
-    document.getElementById('current-file').style.display =
-        'none';
-
-
+    document.getElementById('current-file').textContent = '';
+    document.getElementById('current-file').style.display = 'none';
 
     /* 삭제 버튼 숨김 */
 
-    document.getElementById('delBtn').style.display =
-        'none';
-
-
+    document.getElementById('delBtn').style.display = 'none';
 
     /* 모달 열기 */
-
     modal.classList.add('open');
 
   }
@@ -862,51 +897,29 @@
 
   function editItem(button) {
 
-
     /*
      * 클릭한 수정 버튼의 부모 tr
      */
 
-    const row =
-        button.closest('tr');
-
-
+    const row = button.closest('tr');
 
     /*
      * data-* 값
      */
 
-    const id =
-        row.dataset.id;
-
-
-    const type =
-        row.dataset.type;
-
-
-    const title =
-        row.dataset.title;
-
-
-    const date =
-        row.dataset.date;
-
-
-    const content =
-        row.dataset.content;
-
-
-    const file =
-        row.dataset.file;
-
+    const id = row.dataset.id;
+    const type = row.dataset.type;
+    const title = row.dataset.title;
+    const date = row.dataset.date;
+    const content = row.dataset.content;
+    const file = row.dataset.file;
 
 
     /*
      * 모달 제목
      */
 
-    document.getElementById('mTitle').textContent =
-        '글 수정';
+    document.getElementById('mTitle').textContent = '글 수정';
 
 
 
@@ -914,24 +927,11 @@
      * 기존 데이터 입력
      */
 
-    document.getElementById('f-id').value =
-        id || '';
-
-
-    document.getElementById('f-type').value =
-        type || '1';
-
-
-    document.getElementById('f-title').value =
-        title || '';
-
-
-    document.getElementById('f-date').value =
-        date || '';
-
-
-    document.getElementById('f-content').value =
-        content || '';
+    document.getElementById('f-id').value = id || '';
+    document.getElementById('f-type').value = type || '1';
+    document.getElementById('f-title').value = title || '';
+    document.getElementById('f-date').value = date || '';
+    document.getElementById('f-content').value = content || '';
 
 
 
@@ -939,26 +939,16 @@
      * 현재 파일 표시
      */
 
-    const currentFile =
-        document.getElementById('current-file');
+    const currentFile = document.getElementById('current-file');
 
 
     if (file) {
-
-      currentFile.textContent =
-          '현재 첨부파일: ' + file;
-
-      currentFile.style.display =
-          'block';
+      currentFile.textContent = '현재 첨부파일: ' + file;
+      currentFile.style.display = 'block';
 
     } else {
-
-      currentFile.textContent =
-          '';
-
-      currentFile.style.display =
-          'none';
-
+      currentFile.textContent = '';
+      currentFile.style.display = 'none';
     }
 
 
@@ -1010,27 +1000,15 @@
   function save() {
 
 
-    const title =
-        document
-            .getElementById('f-title')
-            .value
-            .trim();
-
-
+    const title = document.getElementById('f-title').value.trim();
 
     /*
      * 제목 검사
      */
-
     if (!title) {
-
       alert('제목을 입력하세요.');
-
       return;
-
     }
-
-
 
     /*
      * 본문 검사
@@ -1038,7 +1016,14 @@
      * 현재 기존 코드에서는 본문이 필수가 아니므로
      * 제목만 검사합니다.
      */
-
+    // 파일 용량 검사
+const file = document.getElementById('f-file').files[0];
+    if (file && file.size > MAX_FILE_SIZE) {
+        fileError.textContent = '파일 용량은 20MB를 초과할 수 없습니다.';
+        fileError.style.display = 'block';
+        file.value = '';
+        return;
+    }
 
 
     /*
@@ -1062,55 +1047,34 @@
   ====================================================== */
 
   function removeItem() {
-
-
-    const id =
-        document
-            .getElementById('f-id')
-            .value;
-
-
+    const id =document.getElementById('f-id').value;
 
     if (!id) {
-
       return;
-
     }
-
-
 
     if (!confirm('이 글을 삭제할까요?')) {
-
       return;
-
     }
-
-
 
     /*
      * 삭제용 form
      */
+    const deleteForm = document.createElement('form');
+    deleteForm.method = 'post';
+    deleteForm.action = '/admin/notices/delete/' + id;
+    const csrfToken = document.querySelector('#csrf-form input[type="hidden"]');
 
-    const deleteForm =
-        document.createElement('form');
-
-
-    deleteForm.method =
-        'post';
-
-
-    deleteForm.action =
-        '/admin/notices/delete/' + id;
-
-
-
-    document.body.appendChild(
-        deleteForm
-    );
-
-
+    if (csrfToken) {
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = csrfToken.name;
+        csrfInput.value = csrfToken.value;
+        deleteForm.appendChild(csrfInput);
+    }
+    
+    document.body.appendChild(deleteForm);
     deleteForm.submit();
-
   }
 
 

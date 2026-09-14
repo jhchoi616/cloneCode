@@ -694,6 +694,7 @@
     <input id="contact"
            name="contact"
            type="text"
+           maxlength="50"
            required
            placeholder="010-0000-0000" />
 
@@ -746,6 +747,7 @@
   <input id="schedule"
          name="schedule"
          type="text"
+         maxlength="30"
          placeholder="예) 30명 · 4월 첫 주 · 강남 근처" />
 
 </div>
@@ -759,6 +761,7 @@
 
   <textarea id="message"
             name="message"
+            maxlength="300"
             required
             placeholder="요청 사항을 자유롭게 적어주세요."></textarea>
 
@@ -801,22 +804,40 @@
   const hiddenMsg = document.getElementById('hidden-msg');
   const token = document.querySelector('meta[name="_csrf"]').content;
   const header = document.querySelector('meta[name="_csrf_header"]').content;
-  
+  // 인원 체크
+  const schedule = document.getElementById('schedule');
+  // 본문
+  const message = document.getElementById('message');
+
   contactForm.addEventListener('submit', async function (event) {
     event.preventDefault();
 
     const form = this;
     const contactInput = form.querySelector('#contact');
     const contactCheck = window.bpointFormatContact(contactInput.value);
-
+    let msg_value = message.value;
     if (!contactCheck.valid) {
       alert('회신 받으실 연락처 또는 이메일을 정확히 입력해주세요.');
       contactInput.focus();
       return;
     }
-
     contactInput.value = contactCheck.value;
-
+    if(schedule.value.length>30){
+      alert("희망 인원 및 일정은 30자 이내로 작성해주세요");
+      schedule.focus();
+      return;
+    }
+    if(!msg_value.trim()){
+      alert("요청사항을 작성해주세요");
+      message.focus();
+      return;
+    }
+    if(msg_value.trim().length>300){
+      alert("요청사항은 300자 이내로 작성해주세요");
+      message.focus();
+      return;
+    }
+    
     try {
       const response = await fetch(form.action, {
         method: 'POST',

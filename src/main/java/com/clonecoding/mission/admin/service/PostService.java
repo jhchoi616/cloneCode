@@ -252,8 +252,7 @@ public Page<Post> findAll(
          * 실제 저장 경로
          */
 
-        Path targetPath =
-                uploadPath.resolve(storedFilename);
+        Path targetPath = uploadPath.resolve(storedFilename);
 
 
         /*

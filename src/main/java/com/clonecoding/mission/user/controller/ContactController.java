@@ -49,6 +49,13 @@ public class ContactController {
             return ResponseEntity.badRequest()
                     .body(Map.of("message", "회신받으실 연락처 또는 이메일이 없습니다. 정확한 연락처를 입력해주세요."));
         }
+        String normalizedMsg = form.getMessage().replace("\r\n","").trim();
+        if( normalizedMsg.length()>300){
+            return ResponseEntity.badRequest().body(Map.of("message","요청 사항은 300자를 초과하여 작성 할 수 없습니다."));
+        }
+        if( form.getSchedule().length() >30){
+            return ResponseEntity.badRequest().body(Map.of("message","인원 및 일정은 30자를 초과하여 작성 할 수 없습니다."));
+        }
 
         Contact contact = new Contact();
 
